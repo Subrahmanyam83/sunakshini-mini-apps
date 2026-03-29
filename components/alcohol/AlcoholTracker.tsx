@@ -26,12 +26,12 @@ const PRESETS = [
   { label: "All", days: 3650 },
 ];
 
-export function AlcoholTracker() {
-  const today     = new Date().toISOString().split("T")[0];
-  const thirtyAgo = new Date(Date.now() - 30 * 864e5).toISOString().split("T")[0];
+function getToday() { return new Date().toISOString().split("T")[0]; }
+function getDaysAgo(n: number) { return new Date(Date.now() - n * 864e5).toISOString().split("T")[0]; }
 
-  const [from, setFrom]       = useState(thirtyAgo);
-  const [to, setTo]           = useState(today);
+export function AlcoholTracker() {
+  const [from, setFrom]       = useState(() => getDaysAgo(30));
+  const [to, setTo]           = useState(getToday);
   const [active, setActive]   = useState("30d");
   const [data, setData]       = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +55,7 @@ export function AlcoholTracker() {
   function applyPreset(label: string, days: number) {
     setActive(label);
     setFrom(new Date(Date.now() - days * 864e5).toISOString().split("T")[0]);
-    setTo(today);
+    setTo(getToday());
   }
 
   return (
@@ -92,7 +92,7 @@ export function AlcoholTracker() {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-400">To</label>
-              <input type="date" value={to} min={from} max={today}
+              <input type="date" value={to} min={from} max={getToday()}
                 onChange={(e) => { setTo(e.target.value); setActive(""); }}
                 className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:bg-white transition-all"
               />

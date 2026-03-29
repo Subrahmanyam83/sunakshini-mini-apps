@@ -16,9 +16,12 @@ const DRINK_TYPES: { value: DrinkType; label: string; unit: DrinkUnit }[] = [
   { value: "other",  label: "Other",  unit: "peg"   },
 ];
 
+function getToday() {
+  return new Date().toISOString().split("T")[0];
+}
+
 export function EntryForm({ onAdded }: { onAdded: () => void }) {
-  const today = new Date().toISOString().split("T")[0];
-  const [date, setDate]         = useState(today);
+  const [date, setDate]         = useState(getToday);
   const [type, setType]         = useState<DrinkType>("beer");
   const [quantity, setQuantity] = useState("1");
   const [loading, setLoading]   = useState(false);
@@ -60,7 +63,7 @@ export function EntryForm({ onAdded }: { onAdded: () => void }) {
           <div className="space-y-1">
             <label className="text-xs font-medium text-gray-500">Date</label>
             <input
-              type="date" value={date} max={today}
+              type="date" value={date} max={getToday()}
               onChange={(e) => setDate(e.target.value)}
               className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:bg-white transition-all"
             />
