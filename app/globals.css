@@ -141,6 +141,10 @@
 
 .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
+.header-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #2563eb 100%);
+}
+
 .stagger-1 { animation-delay: 0.04s; }
 .stagger-2 { animation-delay: 0.08s; }
 .stagger-3 { animation-delay: 0.12s; }

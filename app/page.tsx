@@ -5,12 +5,10 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#f8f9fc]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 sticky top-0 z-10">
+      <div className="sticky top-0 z-10" style={{background:"#4f46e5"}}>
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div>
-            <span className="text-sm font-semibold text-gray-900 tracking-tight">Health Monitor</span>
-          </div>
-          <span className="text-xs text-gray-400">Personal tracker</span>
+          <span className="text-sm font-semibold text-white tracking-tight">Health Monitor</span>
+          <span className="text-xs text-indigo-200">Personal tracker</span>
         </div>
       </div>
 
