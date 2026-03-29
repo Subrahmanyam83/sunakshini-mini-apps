@@ -7,12 +7,12 @@ export default function AlcoholPage() {
       {/* Header */}
       <div className="sticky top-0 z-10" style={{ background: "#4f46e5" }}>
         <div className="w-full max-w-md mx-auto px-4 h-14 flex items-center gap-3">
-          <Link href="/" className="text-indigo-200 hover:text-white transition-colors">
+          <Link href="/" className="flex items-center gap-2 text-white transition-colors active:opacity-70">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
+            <span className="text-sm font-semibold tracking-tight">Alcohol Consumption</span>
           </Link>
-          <span className="text-sm font-semibold text-white tracking-tight">Alcohol Consumption</span>
         </div>
       </div>
 
