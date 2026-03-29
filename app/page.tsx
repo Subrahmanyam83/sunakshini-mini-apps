@@ -19,38 +19,32 @@ const apps = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f8f9fc]">
-      {/* Header */}
-      <div className="sticky top-0 z-10" style={{ background: "#4f46e5" }}>
-        <div className="w-full max-w-md mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="text-sm font-semibold text-white tracking-tight">MiniApps</span>
-          <span className="text-xs text-indigo-200">Your personal hub</span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="w-full max-w-md mx-auto px-4 py-6">
-        <p className="text-xs text-gray-400 uppercase tracking-widest font-medium mb-4">Apps</p>
-        <div className="flex flex-col gap-3">
-          {apps.map((app) => (
-            <Link key={app.href} href={app.href}>
-              <div className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                  style={{ background: `${app.color}18` }}
-                >
-                  {app.icon}
+    <main className="min-h-screen bg-[#f8f9fc] flex flex-col">
+      {/* Content centered */}
+      <div className="flex-1 flex items-center">
+        <div className="w-full max-w-md mx-auto px-4 py-6">
+          <p className="text-lg font-bold text-gray-700 text-center mb-6">Rentala Mini Apps</p>
+          <div className="flex flex-col gap-3">
+            {apps.map((app) => (
+              <Link key={app.href} href={app.href}>
+                <div className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                    style={{ background: `${app.color}18` }}
+                  >
+                    {app.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-800">{app.name}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 leading-snug">{app.description}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800">{app.name}</p>
-                  <p className="text-xs text-gray-400 mt-0.5 leading-snug">{app.description}</p>
-                </div>
-                <svg className="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </main>
