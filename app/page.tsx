@@ -20,10 +20,16 @@ const apps = [
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#f8f9fc] flex flex-col">
+      {/* Header */}
+      <div className="sticky top-0 z-10" style={{ background: "#4f46e5" }}>
+        <div className="w-full max-w-md mx-auto px-4 h-14 flex items-center justify-center">
+          <span className="text-sm font-semibold text-white tracking-tight">Rentala Mini Apps</span>
+        </div>
+      </div>
+
       {/* Content centered */}
       <div className="flex-1 flex items-center">
         <div className="w-full max-w-md mx-auto px-4 py-6">
-          <p className="text-lg font-bold text-gray-700 text-center mb-6">Rentala Mini Apps</p>
           <div className="flex flex-col gap-3">
             {apps.map((app) => (
               <Link key={app.href} href={app.href}>
