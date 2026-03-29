@@ -3,9 +3,9 @@ import { MasterList } from "@/components/groceries/MasterList";
 
 export default function MasterListPage() {
   return (
-    <main className="min-h-screen w-full bg-[#f8f9fc] overflow-x-hidden">
-      {/* Header */}
-      <div className="sticky top-0 z-10 w-full" style={{ background: "#059669" }}>
+    <div className="min-h-screen w-full bg-[#f8f9fc] overflow-x-hidden">
+      {/* Header - fixed so it never scrolls away */}
+      <div className="fixed top-0 left-0 right-0 z-10 w-full" style={{ background: "#059669" }}>
         <div className="w-full px-4 h-14 flex items-center gap-3">
           <Link href="/groceries" className="text-emerald-200 hover:text-white transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,10 +17,10 @@ export default function MasterListPage() {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="w-full px-4 py-5">
+      {/* Content — offset by header height */}
+      <div className="w-full px-4 pt-20 pb-8">
         <MasterList />
       </div>
-    </main>
+    </div>
   );
 }
