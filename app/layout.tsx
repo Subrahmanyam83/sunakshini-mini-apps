@@ -9,15 +9,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Health Monitor",
-  description: "Personal health tracking",
+  title: "MiniApps",
+  description: "Personal mini apps hub",
   icons: {
     icon: "/Rentala-Health-Monitor.png",
     apple: "/Rentala-Health-Monitor.png",
   },
   appleWebApp: {
     capable: true,
-    title: "Health Monitor",
+    title: "MiniApps",
     statusBarStyle: "black-translucent",
   },
   viewport: {
