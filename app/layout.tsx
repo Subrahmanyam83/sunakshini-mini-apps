@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MiniApps",
+  title: "Mini Apps",
   description: "Personal mini apps hub",
   icons: {
     icon: "/Rentala-Health-Monitor.png",
