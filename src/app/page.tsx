@@ -52,10 +52,10 @@ export default async function Home() {
               <Link key={app.href} href={app.href}>
                 <div className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                    style={{ background: `${app.color}18` }}
+                    className="w-14 h-14 rounded-2xl flex flex-col items-center justify-center gap-0.5 flex-shrink-0"
+                    style={{ background: app.color }}
                   >
-                    {app.icon}
+                    <span className="text-2xl leading-none">{app.icon}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-800">{app.name}</p>
