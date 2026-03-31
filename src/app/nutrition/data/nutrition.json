@@ -10,5 +10,27 @@
       "id": "fad06cac-d652-47a1-a99b-c073cb868ae7"
     }
   ],
-  "logs": []
+  "logs": [
+    {
+      "date": "2026-03-31",
+      "memberId": "fad06cac-d652-47a1-a99b-c073cb868ae7",
+      "meals": [
+        {
+          "id": "8249f29c-4826-49ea-a00a-20ac8e5396ff",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "2670056",
+              "name": "LATTE DA MACADAMIA MILK, LATTE DA",
+              "portionGrams": 1,
+              "calories": 0,
+              "proteinG": 0,
+              "carbsG": 0,
+              "fatG": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
