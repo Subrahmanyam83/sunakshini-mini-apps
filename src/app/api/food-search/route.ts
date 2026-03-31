@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(
-      `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&pageSize=10&dataType=Foundation,SR%20Legacy&api_key=${USDA_API_KEY}`,
+      `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&pageSize=15&api_key=${USDA_API_KEY}`,
       { cache: "no-store" }
     );
     if (!res.ok) throw new Error(`USDA error: ${res.status}`);

@@ -16,14 +16,37 @@ type Props = {
   onAdd: (food: FoodItem) => void;
 };
 
+const UNIT_TO_GRAMS = {
+  g: 1,
+  cup: 240,
+  plate: 350,
+  bowl: 300,
+  glass: 240,
+  tbsp: 15,
+} as const;
+
+type PortionUnit = keyof typeof UNIT_TO_GRAMS;
+
+const UNIT_LABELS: Record<PortionUnit, string> = {
+  g: "grams (g)",
+  cup: "cup (~240g)",
+  plate: "plate (~350g)",
+  bowl: "bowl (~300g)",
+  glass: "glass (~240g)",
+  tbsp: "tablespoon (~15g)",
+};
+
 export function FoodSearch({ onAdd }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<UsdaResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchErr, setSearchErr] = useState("");
   const [selected, setSelected] = useState<UsdaResult | null>(null);
-  const [portionGrams, setPortionGrams] = useState("100");
+  const [portionAmount, setPortionAmount] = useState("1");
+  const [portionUnit, setPortionUnit] = useState<PortionUnit>("g");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const portionGrams = Math.round(Number(portionAmount || 0) * UNIT_TO_GRAMS[portionUnit]);
 
   const search = useCallback(async (q: string) => {
     if (q.trim().length < 2) { setResults([]); return; }
@@ -50,20 +73,19 @@ export function FoodSearch({ onAdd }: Props) {
 
   function selectFood(food: UsdaResult) {
     setSelected(food);
-    setPortionGrams("100");
+    setPortionAmount("1");
+    setPortionUnit("g");
     setResults([]);
     setQuery(food.name);
   }
 
   function handleAdd() {
-    if (!selected) return;
-    const grams = Number(portionGrams);
-    if (!grams || grams < 1) return;
-    const factor = grams / 100;
+    if (!selected || portionGrams < 1) return;
+    const factor = portionGrams / 100;
     onAdd({
       fdcId: selected.fdcId,
       name: selected.name,
-      portionGrams: grams,
+      portionGrams,
       calories: Math.round(selected.caloriesPer100g * factor),
       proteinG: Math.round(selected.proteinPer100g * factor * 10) / 10,
       carbsG: Math.round(selected.carbsPer100g * factor * 10) / 10,
@@ -71,7 +93,8 @@ export function FoodSearch({ onAdd }: Props) {
     });
     setQuery("");
     setSelected(null);
-    setPortionGrams("100");
+    setPortionAmount("1");
+    setPortionUnit("g");
     setResults([]);
   }
 
@@ -120,29 +143,54 @@ export function FoodSearch({ onAdd }: Props) {
       {selected && (
         <div className="bg-[#f0fdf4] rounded-xl p-3 space-y-3 border border-[#bbf7d0]">
           <p className="text-sm font-medium text-gray-800 leading-snug">{selected.name}</p>
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-500 flex-shrink-0">Portion (g)</label>
-            <input
-              type="number"
-              value={portionGrams}
-              onChange={(e) => setPortionGrams(e.target.value)}
-              min="1"
-              className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#16a34a] transition-all"
-              style={{ fontSize: "16px" }}
-            />
-            <span className="text-xs text-gray-400">
-              = {Math.round(selected.caloriesPer100g * Number(portionGrams || 0) / 100)} kcal
+
+          {/* Portion input */}
+          <div className="space-y-2">
+            <label className="text-xs text-gray-500">Portion</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={portionAmount}
+                onChange={(e) => setPortionAmount(e.target.value)}
+                min="0.1"
+                step="0.5"
+                className="w-20 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#16a34a] transition-all"
+                style={{ fontSize: "16px" }}
+              />
+              <select
+                value={portionUnit}
+                onChange={(e) => setPortionUnit(e.target.value as PortionUnit)}
+                className="flex-1 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#16a34a] transition-all"
+                style={{ fontSize: "16px" }}
+              >
+                {(Object.keys(UNIT_LABELS) as PortionUnit[]).map((u) => (
+                  <option key={u} value={u}>{UNIT_LABELS[u]}</option>
+                ))}
+              </select>
+            </div>
+            {portionUnit !== "g" && (
+              <p className="text-xs text-gray-400">
+                = {portionGrams}g
+              </p>
+            )}
+          </div>
+
+          {/* Nutrition preview */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-800">
+              {Math.round(selected.caloriesPer100g * portionGrams / 100)} kcal
             </span>
+            <div className="flex gap-3 text-xs text-gray-500">
+              <span>P {Math.round(selected.proteinPer100g * portionGrams / 100 * 10) / 10}g</span>
+              <span>C {Math.round(selected.carbsPer100g * portionGrams / 100 * 10) / 10}g</span>
+              <span>F {Math.round(selected.fatPer100g * portionGrams / 100 * 10) / 10}g</span>
+            </div>
           </div>
-          <div className="flex gap-3 text-xs text-gray-500">
-            <span>Protein: {Math.round(selected.proteinPer100g * Number(portionGrams || 0) / 100 * 10) / 10}g</span>
-            <span>Carbs: {Math.round(selected.carbsPer100g * Number(portionGrams || 0) / 100 * 10) / 10}g</span>
-            <span>Fat: {Math.round(selected.fatPer100g * Number(portionGrams || 0) / 100 * 10) / 10}g</span>
-          </div>
+
           <button
             type="button"
             onClick={handleAdd}
-            disabled={!portionGrams || Number(portionGrams) < 1}
+            disabled={portionGrams < 1}
             className="w-full h-10 rounded-xl text-sm font-semibold text-white disabled:opacity-40 active:scale-95 transition-all"
             style={{ background: "#16a34a" }}
           >

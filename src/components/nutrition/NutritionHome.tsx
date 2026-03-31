@@ -186,9 +186,20 @@ export function NutritionHome() {
                   <div className="flex-1 min-w-0 space-y-1.5">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold text-gray-800">{member.name}</p>
-                      <p className="text-xs font-semibold" style={{ color: over ? "#dc2626" : "#16a34a" }}>
-                        {consumed} / {tdee} kcal
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-semibold" style={{ color: over ? "#dc2626" : "#16a34a" }}>
+                          {consumed} / {tdee} kcal
+                        </p>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setView({ type: "edit-member", member }); }}
+                          className="w-7 h-7 flex items-center justify-center rounded-lg active:bg-gray-100 transition-colors flex-shrink-0"
+                          title="Edit profile"
+                        >
+                          <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828A2 2 0 0110 16H8v-2a2 2 0 01.586-1.414z" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                     {/* Progress bar */}
                     <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">

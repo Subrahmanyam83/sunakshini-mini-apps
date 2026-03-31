@@ -1,68 +1,100 @@
 # Skill: Data Storage
 
-How to decide where to store data in MiniApps, and how to implement it.
+All data in MiniApps is stored via the GitHub API. Never use localStorage.
 
-## Decision Rule
+## Rule
 
-**Use localStorage when:**
-- Data is personal to one device (shopping lists, preferences, UI state)
-- No need to sync across devices
-- No sensitive data
-- Examples: grocery list, master list categories
+**Always use GitHub API for all data storage** — no exceptions.
+- Data persists across devices and browsers
+- Data survives clearing the browser
+- All apps store their data in their own JSON file under `src/app/<app-name>/data/`
 
-**Use GitHub API when:**
-- Data must persist across devices and browsers
-- Data is important enough to survive clearing the browser
-- Examples: alcohol entries, any health tracking data
+## File Location
 
-## localStorage Pattern
-
-Always use a custom hook in `src/lib/use-your-feature.ts`:
-
-```ts
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
-
-const STORAGE_KEY = "miniapps-your-feature";
-
-function load() {
-  if (typeof window === "undefined") return DEFAULT_VALUE;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : DEFAULT_VALUE;
-  } catch {
-    return DEFAULT_VALUE;
-  }
-}
-
-export function useYourFeature() {
-  const [data, setData] = useState(DEFAULT_VALUE);
-
-  useEffect(() => { setData(load()); }, []);
-
-  const update = useCallback((updater) => {
-    setData((prev) => {
-      const next = updater(prev);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  return { data, update };
-}
+Each app gets its own data file:
 ```
+src/app/<app-name>/data/<app-name>.json
+```
+Examples:
+- `src/app/alcohol/data/alcohol.json`
+- `src/app/nutrition/data/nutrition.json`
+- `src/app/groceries/data/grocery-items.json`
 
-**Rules:**
-- Always check `typeof window === "undefined"` before accessing localStorage (SSR safety)
-- Always wrap in try/catch
-- Use `miniapps-` prefix for all storage keys to avoid collisions
-- Initialize state with `useEffect` not `useState(() => load())` to avoid hydration errors
+The path passed to the GitHub API must match exactly (e.g. `src/app/nutrition/data/nutrition.json`).
 
 ## GitHub API Pattern
 
 Used via `src/lib/github.ts` — `getFile(path)` and `updateFile(path, content, sha, message)`.
 
-Data files live in `src/data/` and the path passed to GitHub must match the repo path exactly (e.g. `src/data/alcohol.json`).
+Always call GitHub from an API route (`src/app/api/<app-name>/route.ts`), never from the client directly.
 
-Always store as JSON with a top-level `entries` array.
+### API Route Pattern
+```ts
+import { NextRequest, NextResponse } from "next/server";
+import { getFile, updateFile } from "@/lib/github";
+
+const DATA_PATH = "src/app/<app-name>/data/<app-name>.json";
+
+export async function GET() {
+  const { content, sha } = await getFile(DATA_PATH);
+  const data = JSON.parse(content);
+  return NextResponse.json({ data, sha });
+}
+
+export async function PUT(req: NextRequest) {
+  const { data, sha } = await req.json();
+  await updateFile(DATA_PATH, JSON.stringify(data, null, 2) + "\n", sha, "Update <app-name> data");
+  const { sha: newSha } = await getFile(DATA_PATH);
+  return NextResponse.json({ success: true, sha: newSha });
+}
+```
+
+### Client Hook Pattern
+```ts
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+
+export function useAppData() {
+  const [data, setData] = useState(null);
+  const [sha, setSha] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/<app-name>");
+      if (!res.ok) throw new Error();
+      const json = await res.json();
+      setData(json.data);
+      setSha(json.sha);
+    } catch {
+      setError("Failed to load data.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  const saveData = useCallback(async (next) => {
+    const res = await fetch("/api/<app-name>", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: next, sha }),
+    });
+    if (!res.ok) throw new Error("Failed to save");
+    const json = await res.json();
+    setSha(json.sha);
+    setData(next);
+  }, [sha]);
+
+  return { data, loading, error, fetchData, saveData };
+}
+```
+
+## Initial Data File
+
+Every app must have an initial empty JSON file committed to the repo at the correct path. Create it before building the API route.
