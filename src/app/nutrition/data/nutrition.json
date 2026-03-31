@@ -1,4 +1,14 @@
 {
-  "members": [],
+  "members": [
+    {
+      "name": "Subu",
+      "age": 42,
+      "gender": "male",
+      "weightKg": 85,
+      "heightCm": 182,
+      "activityLevel": "moderately_active",
+      "id": "fad06cac-d652-47a1-a99b-c073cb868ae7"
+    }
+  ],
   "logs": []
 }
