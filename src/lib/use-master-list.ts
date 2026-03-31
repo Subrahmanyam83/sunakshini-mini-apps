@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface MasterCategory {
   id: string;
@@ -8,44 +8,42 @@ export interface MasterCategory {
   items: { id: string; name: string }[];
 }
 
-const STORAGE_KEY = "miniapps-master-categories";
-
-const DEFAULT_CATEGORIES: MasterCategory[] = [
-  { id: "dals", name: "Dals & Legumes", items: ["Rajma","Chole","Chana Dal","Urad Dal - Black","Urad Dal - Green","Urad Dal - Brown","Urad Dal - White","Toor Dal","Masoor Dal","Pesera pappu","Putnala pappa","Groundnuts","Soya beans","Moong Dal"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "grains", name: "Grains & Flour", items: ["Aata","Rice","Raagi","Sooji","Idly Rava","Poha","Maida","Besan","Daliya","Sahana or Chakra Rice"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "oils", name: "Oils & Condiments", items: ["Coconut Oil","Vegetable Oil","Ghee","Honey","Olive Oil","Pasta Sauce","Vinegar","Ketchup","Soy Sauce","Hot Sauce","Sweet Sauce","Ginger Garlic Paste"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "spices", name: "Spices & Masalas", items: ["Hing","Jeera","Avalu (Mustard seeds)","Menthulu (Fenugreek seeds)","Karvepaku (Curry leaves)","Coriander","Dalchin chakka (Cinnamon)","Bay Leaves","Cardamom","Cloves","Star Anise","Sesame Seeds","Poppy Seeds","Salt","Sugar","Black Pepper","Bellam (Jaggery)","Red Mirchi","Garam Masala","Chat Masala","Chole Masala"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "veggies", name: "Veggies", items: ["Drumsticks","Green Leafy Veggies","Arbi","Dosakaya","Bhendi","Kundru","Lemon"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "instant", name: "Instant & Dry Foods", items: ["Maggi","Saboodaana","Pasta","Vermicelli"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "nuts", name: "Nuts & Dry Fruits", items: ["Badam","Pista","Kajup (Cashews)","Kishmish (Raisins)"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "frozen", name: "Frozen", items: ["Frozen Paneer","Frozen Chapatis","Frozen Peas","Frozen Corn"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "hygiene", name: "Soaps & Hygiene", items: ["Rin Soap","Bathing Soap","Toothbrush (Kids)","Toothbrush (Adults)","Toothpaste (Kids)","Toothpaste (Adults)","Comb","Hair Dye"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-  { id: "other", name: "Other", items: ["Coconut Powder"].map((n) => ({ id: crypto.randomUUID(), name: n })) },
-];
-
-function load(): MasterCategory[] {
-  if (typeof window === "undefined") return DEFAULT_CATEGORIES;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : DEFAULT_CATEGORIES;
-  } catch {
-    return DEFAULT_CATEGORIES;
-  }
+async function fetchCategories(): Promise<MasterCategory[]> {
+  const res = await fetch("/api/master-categories", { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to load master categories");
+  return res.json();
 }
 
-function save(cats: MasterCategory[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cats));
+async function pushCategories(categories: MasterCategory[]): Promise<void> {
+  const res = await fetch("/api/master-categories", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(categories),
+  });
+  if (!res.ok) throw new Error("Failed to save master categories");
 }
 
 export function useMasterList() {
   const [categories, setCategories] = useState<MasterCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => { setCategories(load()); }, []);
+  useEffect(() => {
+    fetchCategories()
+      .then(setCategories)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const update = useCallback((updater: (prev: MasterCategory[]) => MasterCategory[]) => {
     setCategories((prev) => {
       const next = updater(prev);
-      save(next);
+      // debounce saves so rapid edits don't fire multiple requests
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => {
+        pushCategories(next).catch((e) => console.error("Save failed:", e));
+      }, 500);
       return next;
     });
   }, []);
@@ -92,5 +90,5 @@ export function useMasterList() {
     });
   }, [update]);
 
-  return { categories, addCategory, deleteCategory, renameCategory, addItem, deleteItem, renameItem, moveItem };
+  return { categories, loading, error, addCategory, deleteCategory, renameCategory, addItem, deleteItem, renameItem, moveItem };
 }

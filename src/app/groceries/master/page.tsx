@@ -6,7 +6,7 @@ import { MasterList } from "@/components/groceries/MasterList";
 import { useMasterList } from "@/lib/use-master-list";
 
 export default function MasterListPage() {
-  const { addCategory } = useMasterList();
+  const { categories, loading, error, addCategory, deleteCategory, renameCategory, addItem, deleteItem, renameItem, moveItem } = useMasterList();
   const [adding, setAdding] = useState(false);
   const [newCatName, setNewCatName] = useState("");
 
@@ -59,7 +59,17 @@ export default function MasterListPage() {
 
       {/* Content */}
       <div className="w-full px-4 pt-20 pb-8">
-        <MasterList />
+        {loading && <p className="text-center text-sm text-gray-400 py-12">Loading...</p>}
+        {error && <p className="text-center text-sm text-red-400 py-12">{error}</p>}
+        {!loading && !error && <MasterList
+          categories={categories}
+          deleteCategory={deleteCategory}
+          renameCategory={renameCategory}
+          addItem={addItem}
+          deleteItem={deleteItem}
+          renameItem={renameItem}
+          moveItem={moveItem}
+        />}
       </div>
     </div>
   );

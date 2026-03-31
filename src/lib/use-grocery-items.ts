@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface GroceryItem {
   id: string;
@@ -8,37 +8,41 @@ export interface GroceryItem {
   bought: boolean;
 }
 
-const STORAGE_KEY = "miniapps-grocery-items";
-
-function loadItems(): GroceryItem[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
+async function fetchItems(): Promise<GroceryItem[]> {
+  const res = await fetch("/api/grocery-items", { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to load grocery items");
+  return res.json();
 }
 
-function saveItems(items: GroceryItem[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+async function pushItems(items: GroceryItem[]): Promise<void> {
+  const res = await fetch("/api/grocery-items", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(items),
+  });
+  if (!res.ok) throw new Error("Failed to save grocery items");
 }
 
 export function useGroceryItems() {
   const [items, setItems] = useState<GroceryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setItems(loadItems());
-    function onStorage(e: StorageEvent) {
-      if (e.key === STORAGE_KEY) setItems(loadItems());
-    }
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    fetchItems()
+      .then(setItems)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const updateItems = useCallback((updater: (prev: GroceryItem[]) => GroceryItem[]) => {
     setItems((prev) => {
       const next = updater(prev);
-      saveItems(next);
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => {
+        pushItems(next).catch((e) => console.error("Save failed:", e));
+      }, 500);
       return next;
     });
   }, []);
@@ -58,5 +62,5 @@ export function useGroceryItems() {
     updateItems((prev) => prev.filter((i) => !i.bought));
   }, [updateItems]);
 
-  return { items, addItem, toggleItem, clearBought };
+  return { items, loading, error, addItem, toggleItem, clearBought };
 }

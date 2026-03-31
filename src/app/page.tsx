@@ -18,6 +18,13 @@ const apps = [
     icon: "🛒",
     color: "#059669",
   },
+  {
+    href: "/nutrition",
+    name: "My Nutrition",
+    description: "Track daily meals, calories and burn suggestions for your family",
+    icon: "🥗",
+    color: "#16a34a",
+  },
 ];
 
 export default async function Home() {

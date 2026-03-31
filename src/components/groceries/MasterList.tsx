@@ -6,15 +6,33 @@ import { useMasterList } from "@/lib/use-master-list";
 
 type EditingItem = { catId: string; itemId: string; name: string; toCatId: string };
 
-export function MasterList() {
+interface MasterListProps {
+  categories: ReturnType<typeof useMasterList>["categories"];
+  deleteCategory: ReturnType<typeof useMasterList>["deleteCategory"];
+  renameCategory: ReturnType<typeof useMasterList>["renameCategory"];
+  addItem: ReturnType<typeof useMasterList>["addItem"];
+  deleteItem: ReturnType<typeof useMasterList>["deleteItem"];
+  renameItem: ReturnType<typeof useMasterList>["renameItem"];
+  moveItem: ReturnType<typeof useMasterList>["moveItem"];
+}
+
+export function MasterList({ categories, deleteCategory, renameCategory, addItem, deleteItem, renameItem, moveItem }: MasterListProps) {
   const { items: groceryItems, addItem: addToGrocery } = useGroceryItems();
-  const { categories, deleteCategory, renameCategory, addItem, deleteItem, renameItem, moveItem } = useMasterList();
 
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
   const [addingItemCatId, setAddingItemCatId] = useState<string | null>(null);
   const [newItemName, setNewItemName] = useState("");
   const [editingCat, setEditingCat] = useState<{ id: string; name: string } | null>(null);
+  const [collapsedCats, setCollapsedCats] = useState<Set<string>>(new Set());
+
+  function toggleCollapse(catId: string) {
+    setCollapsedCats((prev) => {
+      const next = new Set(prev);
+      next.has(catId) ? next.delete(catId) : next.add(catId);
+      return next;
+    });
+  }
 
   function handleAddToGrocery(name: string) {
     addToGrocery(name);
@@ -74,7 +92,13 @@ export function MasterList() {
             </div>
           ) : (
             <div className="flex items-center justify-between px-4 pt-3 pb-2">
-              <p className="text-xs text-gray-400 uppercase tracking-widest font-medium">{cat.name}</p>
+              <button onClick={() => toggleCollapse(cat.id)} className="flex items-center gap-2 flex-1 min-w-0">
+                <svg className={`w-3.5 h-3.5 text-gray-300 flex-shrink-0 transition-transform ${collapsedCats.has(cat.id) ? "-rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+                <p className="text-xs text-gray-400 uppercase tracking-widest font-medium">{cat.name}</p>
+                {collapsedCats.has(cat.id) && <span className="text-xs text-gray-300 ml-1">({cat.items.length})</span>}
+              </button>
               <button onClick={() => { setEditingCat({ id: cat.id, name: cat.name }); setEditingItem(null); }} className="text-gray-300 hover:text-gray-500 p-1">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828A2 2 0 0110 16H8v-2a2 2 0 01.586-1.414z" />
@@ -84,7 +108,7 @@ export function MasterList() {
           )}
 
           {/* Items */}
-          <ul className="divide-y divide-gray-50">
+          {!collapsedCats.has(cat.id) && <ul className="divide-y divide-gray-50">
             {cat.items.map((item) => (
               <li key={item.id}>
                 {editingItem?.itemId === item.id ? (
@@ -146,10 +170,10 @@ export function MasterList() {
                 )}
               </li>
             ))}
-          </ul>
+          </ul>}
 
           {/* Add item to category */}
-          {addingItemCatId === cat.id ? (
+          {!collapsedCats.has(cat.id) && (addingItemCatId === cat.id ? (
             <div className="flex items-center gap-2 px-4 py-3 border-t border-gray-50">
               <input
                 autoFocus
@@ -173,7 +197,7 @@ export function MasterList() {
               </svg>
               <span className="text-xs font-medium">Add item</span>
             </button>
-          )}
+          ))}
         </div>
       ))}
 
