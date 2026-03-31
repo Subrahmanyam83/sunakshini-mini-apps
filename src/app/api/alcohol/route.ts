@@ -3,7 +3,7 @@ import { getFile, updateFile } from "@/lib/github";
 import { analyzeEntries, filterByDateRange, groupByDate } from "@/lib/alcohol-analysis";
 import { AlcoholData, AlcoholEntry, DrinkType, DrinkUnit } from "@/types/alcohol";
 
-const DATA_PATH = "data/alcohol.json";
+const DATA_PATH = "src/data/alcohol.json";
 
 const UNIT_ML: Record<DrinkUnit, number> = {
   "300ml": 300,
