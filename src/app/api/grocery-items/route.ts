@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFile, updateFile } from "@/lib/github";
+import { currentUser } from "@clerk/nextjs/server";
+import { getFileOrDefault, updateFile } from "@/lib/github";
 import { GroceryItem } from "@/lib/use-grocery-items";
 
-const DATA_PATH = "src/app/groceries/data/grocery-items.json";
+async function getUserPath() {
+  const user = await currentUser();
+  const name = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] ?? "unknown";
+  return `data/groceries/users/${name}/items.json`;
+}
 
 export async function GET() {
   try {
-    const { content } = await getFile(DATA_PATH);
+    const path = await getUserPath();
+    const { content } = await getFileOrDefault<GroceryItem[]>(path, []);
     return NextResponse.json(JSON.parse(content));
   } catch (err) {
     console.error(err);
@@ -16,9 +22,10 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   try {
+    const path = await getUserPath();
     const items: GroceryItem[] = await req.json();
-    const { sha } = await getFile(DATA_PATH);
-    await updateFile(DATA_PATH, JSON.stringify(items, null, 2) + "\n", sha, "chore: update grocery items");
+    const { sha } = await getFileOrDefault<GroceryItem[]>(path, []);
+    await updateFile(path, JSON.stringify(items, null, 2) + "\n", sha, "chore: update grocery items");
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);

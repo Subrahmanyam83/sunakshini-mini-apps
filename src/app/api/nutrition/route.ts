@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFile, updateFile } from "@/lib/github";
+import { currentUser } from "@clerk/nextjs/server";
+import { getFileOrDefault, updateFile, getFile } from "@/lib/github";
 import { NutritionData } from "@/lib/use-nutrition";
 
-const DATA_PATH = "src/app/nutrition/data/nutrition.json";
+const DEFAULT_NUTRITION: NutritionData = { members: [], logs: [] };
+
+async function getUserPath() {
+  const user = await currentUser();
+  const name = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] ?? "unknown";
+  return `data/nutrition/users/${name}/data.json`;
+}
 
 export async function GET() {
   try {
-    const { content, sha } = await getFile(DATA_PATH);
+    const path = await getUserPath();
+    const { content, sha } = await getFileOrDefault<NutritionData>(path, DEFAULT_NUTRITION);
     const data: NutritionData = JSON.parse(content);
     return NextResponse.json({ data, sha });
   } catch (err) {
@@ -17,11 +25,11 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   try {
+    const path = await getUserPath();
     const { data, sha } = await req.json() as { data: NutritionData; sha: string };
     const newContent = JSON.stringify(data, null, 2) + "\n";
-    await updateFile(DATA_PATH, newContent, sha, "Update nutrition data");
-    // Fetch the new sha
-    const { sha: newSha } = await getFile(DATA_PATH);
+    await updateFile(path, newContent, sha, "Update nutrition data");
+    const { sha: newSha } = await getFile(path);
     return NextResponse.json({ success: true, sha: newSha });
   } catch (err) {
     console.error(err);

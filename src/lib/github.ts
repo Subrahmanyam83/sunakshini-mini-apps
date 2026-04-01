@@ -27,6 +27,17 @@ export async function getFile(path: string): Promise<{ content: string; sha: str
   return { content: decoded, sha: data.sha };
 }
 
+export async function getFileOrDefault<T>(
+  path: string,
+  defaultValue: T
+): Promise<{ content: string; sha: string }> {
+  try {
+    return await getFile(path);
+  } catch {
+    return { content: JSON.stringify(defaultValue, null, 2), sha: "" };
+  }
+}
+
 export async function updateFile(
   path: string,
   content: string,
@@ -42,7 +53,7 @@ export async function updateFile(
       Accept: "application/vnd.github+json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ message, content: encoded, sha }),
+    body: JSON.stringify({ message, content: encoded, ...(sha ? { sha } : {}) }),
   });
 
   if (!res.ok) {
