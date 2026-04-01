@@ -6,7 +6,7 @@ import { GroceryItem } from "@/lib/use-grocery-items";
 async function getUserPath() {
   const user = await currentUser();
   const name = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] ?? "unknown";
-  return `data/groceries/users/${name}/items.json`;
+  return `src/app/groceries/users/${name}/items.json`;
 }
 
 export async function GET() {

@@ -14,7 +14,7 @@ const UNIT_ML: Record<DrinkUnit, number> = {
 async function getUserPath() {
   const user = await currentUser();
   const name = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] ?? "unknown";
-  return `data/alcohol/users/${name}/data.json`;
+  return `src/app/alcohol/users/${name}/data.json`;
 }
 
 export async function GET(req: NextRequest) {
