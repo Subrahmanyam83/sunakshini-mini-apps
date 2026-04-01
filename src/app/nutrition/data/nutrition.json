@@ -17,6 +17,15 @@
       "heightCm": 165,
       "activityLevel": "sedentary",
       "id": "05345d1d-67ff-4296-bc60-04bcd6491b39"
+    },
+    {
+      "name": "Usha",
+      "age": 65,
+      "gender": "female",
+      "weightKg": 66,
+      "heightCm": 158,
+      "activityLevel": "moderately_active",
+      "id": "7221d95c-6563-4b69-9cf1-e2048352ef16"
     }
   ],
   "logs": [
