@@ -18,6 +18,7 @@ type Props = {
 
 const UNIT_TO_GRAMS = {
   g: 1,
+  piece: 100,
   cup: 240,
   plate: 350,
   bowl: 300,
@@ -29,6 +30,7 @@ type PortionUnit = keyof typeof UNIT_TO_GRAMS;
 
 const UNIT_LABELS: Record<PortionUnit, string> = {
   g: "grams (g)",
+  piece: "piece (~100g)",
   cup: "cup (~240g)",
   plate: "plate (~350g)",
   bowl: "bowl (~300g)",
