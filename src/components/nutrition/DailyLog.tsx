@@ -15,6 +15,8 @@ import { BurnSuggestions } from "./BurnSuggestions";
 type Props = {
   member: FamilyMember;
   log: DailyLogType;
+  date: string;
+  onDateChange: (date: string) => void;
   onSave: (log: DailyLogType) => Promise<void>;
   onBack: () => void;
 };
@@ -27,7 +29,7 @@ const MEAL_EMOJI: Record<MealType, string> = {
   snack: "🍎",
 };
 
-export function DailyLog({ member, log, onSave, onBack }: Props) {
+export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Props) {
   const [meals, setMeals] = useState<Meal[]>(log.meals);
   const [addingTo, setAddingTo] = useState<MealType | null>(null);
   const [saving, setSaving] = useState(false);
@@ -113,7 +115,13 @@ export function DailyLog({ member, log, onSave, onBack }: Props) {
           Back
         </button>
         <div className="text-right">
-          <p className="text-xs text-gray-400">{log.date}</p>
+          <input
+            type="date"
+            value={date}
+            max={new Date().toISOString().split("T")[0]}
+            onChange={(e) => e.target.value && onDateChange(e.target.value)}
+            className="text-xs text-gray-500 border border-gray-200 rounded-lg px-2 py-1 outline-none focus:border-green-400 mb-0.5"
+          />
           <p className="text-sm font-semibold text-gray-800">{member.name}</p>
         </div>
       </div>
@@ -238,7 +246,7 @@ export function DailyLog({ member, log, onSave, onBack }: Props) {
         className="w-full h-12 rounded-2xl text-sm font-semibold text-white disabled:opacity-40 active:scale-95 transition-all"
         style={{ background: "#16a34a" }}
       >
-        {saving ? "Saving…" : "Save Today's Log"}
+        {saving ? "Saving…" : date === new Date().toISOString().split("T")[0] ? "Save Today's Log" : `Save Log for ${date}`}
       </button>
 
       {/* Burn suggestions */}

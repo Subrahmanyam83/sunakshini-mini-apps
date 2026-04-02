@@ -16,7 +16,7 @@ type View =
   | { type: "home" }
   | { type: "add-member" }
   | { type: "edit-member"; member: FamilyMember }
-  | { type: "daily-log"; member: FamilyMember };
+  | { type: "daily-log"; member: FamilyMember; date: string };
 
 export function NutritionHome() {
   const { data, loading, error, fetchData, addMember, updateMember, deleteMember, getOrCreateLog, saveLog } =
@@ -45,11 +45,13 @@ export function NutritionHome() {
 
   // ── Daily log view ──────────────────────────────────────────
   if (view.type === "daily-log") {
-    const log = getOrCreateLog(view.member.id, today);
+    const log = getOrCreateLog(view.member.id, view.date);
     return (
       <DailyLog
         member={view.member}
         log={log}
+        date={view.date}
+        onDateChange={(date) => setView({ ...view, date })}
         onSave={async (updated: DailyLogType) => {
           await saveLog(updated);
         }}
@@ -173,7 +175,7 @@ export function NutritionHome() {
               <div key={member.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div
                   className="flex items-center gap-3 px-4 py-3 cursor-pointer active:bg-gray-50 transition-colors"
-                  onClick={() => setView({ type: "daily-log", member })}
+                  onClick={() => setView({ type: "daily-log", member, date: today })}
                 >
                   {/* Avatar */}
                   <div
@@ -223,7 +225,7 @@ export function NutritionHome() {
 
                 <div className="flex border-t border-gray-50">
                   <button
-                    onClick={() => setView({ type: "daily-log", member })}
+                    onClick={() => setView({ type: "daily-log", member, date: today })}
                     className="flex-1 py-2.5 text-xs font-medium text-center active:bg-gray-50 transition-colors"
                     style={{ color: "#16a34a" }}
                   >
