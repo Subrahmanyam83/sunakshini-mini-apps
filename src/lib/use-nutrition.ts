@@ -32,11 +32,36 @@ export type Meal = {
   foods: FoodItem[];
 };
 
+export type ExerciseType = "walking" | "home_exercises" | "gym_workout" | "running" | "cycling" | "yoga" | "swimming";
+
+export type Exercise = {
+  id: string;
+  type: ExerciseType;
+  minutes: number;
+  caloriesBurned: number;
+};
+
+export const EXERCISE_META: Record<ExerciseType, { label: string; emoji: string; met: number }> = {
+  walking:         { label: "Walking",        emoji: "🚶", met: 3.5 },
+  running:         { label: "Running",        emoji: "🏃", met: 8.0 },
+  cycling:         { label: "Cycling",        emoji: "🚴", met: 6.0 },
+  home_exercises:  { label: "Home Exercises", emoji: "🏠", met: 5.0 },
+  gym_workout:     { label: "Gym Workout",    emoji: "🏋️", met: 7.0 },
+  yoga:            { label: "Yoga",           emoji: "🧘", met: 2.5 },
+  swimming:        { label: "Swimming",       emoji: "🏊", met: 7.0 },
+};
+
+export function calcExerciseCalories(type: ExerciseType, minutes: number, weightKg: number): number {
+  const { met } = EXERCISE_META[type];
+  return Math.round((met * weightKg * minutes) / 60);
+}
+
 export type DailyLog = {
   date: string;
   memberId: string;
   meals: Meal[];
   waterMl?: number;
+  exercises?: Exercise[];
 };
 
 export type NutritionData = {

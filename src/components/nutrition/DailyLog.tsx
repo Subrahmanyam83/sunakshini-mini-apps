@@ -7,6 +7,10 @@ import {
   Meal,
   MealType,
   FoodItem,
+  Exercise,
+  ExerciseType,
+  EXERCISE_META,
+  calcExerciseCalories,
   sumMealCalories,
 } from "@/lib/use-nutrition";
 import { FoodSearch } from "./FoodSearch";
@@ -33,9 +37,14 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
   const [meals, setMeals] = useState<Meal[]>(log.meals);
   const [waterMl, setWaterMl] = useState<number>(log.waterMl ?? 0);
 
+  const [exercises, setExercises] = useState<Exercise[]>(log.exercises ?? []);
+  const [exerciseType, setExerciseType] = useState<ExerciseType>("walking");
+  const [exerciseMinutes, setExerciseMinutes] = useState("");
+
   useEffect(() => {
     setMeals(log.meals);
     setWaterMl(log.waterMl ?? 0);
+    setExercises(log.exercises ?? []);
   }, [log]);
   const [waterInput, setWaterInput] = useState("");
   const [waterUnit, setWaterUnit] = useState<"ml" | "L">("ml");
@@ -97,6 +106,19 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
     );
   }
 
+  function addExercise() {
+    const mins = parseInt(exerciseMinutes);
+    if (!mins || mins <= 0) return;
+    const caloriesBurned = calcExerciseCalories(exerciseType, mins, member.weightKg);
+    const entry: Exercise = { id: crypto.randomUUID(), type: exerciseType, minutes: mins, caloriesBurned };
+    setExercises((prev) => [...prev, entry]);
+    setExerciseMinutes("");
+  }
+
+  function removeExercise(id: string) {
+    setExercises((prev) => prev.filter((e) => e.id !== id));
+  }
+
   function addWater() {
     const val = parseFloat(waterInput);
     if (!val || val <= 0) return;
@@ -109,7 +131,7 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
     setSaving(true);
     setSaveErr("");
     try {
-      await onSave({ ...log, meals, waterMl });
+      await onSave({ ...log, meals, waterMl, exercises });
     } catch {
       setSaveErr("Failed to save. Try again.");
     } finally {
@@ -143,13 +165,27 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
       </div>
 
       {/* Total calories */}
-      <div
-        className="rounded-2xl p-4 text-white"
-        style={{ background: "#16a34a" }}
-      >
-        <p className="text-xs opacity-80">Total calories today</p>
-        <p className="text-3xl font-bold">{totalCalories} <span className="text-base font-normal opacity-80">kcal</span></p>
-      </div>
+      {(() => {
+        const totalBurned = exercises.reduce((a, e) => a + e.caloriesBurned, 0);
+        const net = totalCalories - totalBurned;
+        return (
+          <div className="rounded-2xl p-4 text-white" style={{ background: "#16a34a" }}>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs opacity-80">Consumed</p>
+                <p className="text-3xl font-bold">{totalCalories} <span className="text-base font-normal opacity-80">kcal</span></p>
+              </div>
+              {totalBurned > 0 && (
+                <div className="text-right">
+                  <p className="text-xs opacity-80">Burned</p>
+                  <p className="text-xl font-bold">-{totalBurned} <span className="text-sm font-normal opacity-80">kcal</span></p>
+                  <p className="text-xs opacity-80 mt-1">Net: <span className="font-bold">{net} kcal</span></p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Meals */}
       {MEAL_ORDER.map((mealType) => {
@@ -254,6 +290,73 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
         );
       })}
 
+      {/* Exercise tracking */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-50">
+          <div className="flex items-center gap-2">
+            <span className="text-base">🏃</span>
+            <span className="text-sm font-semibold text-gray-800">Exercise</span>
+            {exercises.length > 0 && (
+              <span className="text-xs text-gray-400">
+                {exercises.reduce((a, e) => a + e.caloriesBurned, 0)} kcal burned
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Existing exercises */}
+        {exercises.length > 0 && (
+          <div className="divide-y divide-gray-50">
+            {exercises.map((ex) => (
+              <div key={ex.id} className="flex items-center gap-3 px-4 py-2.5">
+                <span className="text-base">{EXERCISE_META[ex.type].emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-800">{EXERCISE_META[ex.type].label}</p>
+                  <p className="text-xs text-gray-400">{ex.minutes} min</p>
+                </div>
+                <span className="text-sm font-semibold text-orange-500">-{ex.caloriesBurned} kcal</span>
+                <button onClick={() => removeExercise(ex.id)} className="w-7 h-7 flex items-center justify-center text-gray-300 active:text-red-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add exercise */}
+        <div className="px-4 py-3 flex items-center gap-2">
+          <select
+            value={exerciseType}
+            onChange={(e) => setExerciseType(e.target.value as ExerciseType)}
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-2 py-2 outline-none focus:border-orange-400 bg-white text-gray-700"
+          >
+            {(Object.keys(EXERCISE_META) as ExerciseType[]).map((key) => (
+              <option key={key} value={key}>
+                {EXERCISE_META[key].emoji} {EXERCISE_META[key].label}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            value={exerciseMinutes}
+            onChange={(e) => setExerciseMinutes(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addExercise()}
+            placeholder="min"
+            className="w-16 text-sm border border-gray-200 rounded-lg px-2 py-2 outline-none focus:border-orange-400 text-center"
+            style={{ fontSize: "16px" }}
+          />
+          <button
+            onClick={addExercise}
+            className="h-10 px-4 rounded-lg text-xs font-semibold text-white active:scale-95 transition-all"
+            style={{ background: "#ea580c" }}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
       {/* Water tracking */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-50">
@@ -313,7 +416,7 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
       {totalCalories > 0 && (
         <div className="pt-2">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Burn Suggestions</p>
-          <BurnSuggestions consumed={totalCalories} member={member} />
+          <BurnSuggestions consumed={totalCalories - exercises.reduce((a, e) => a + e.caloriesBurned, 0)} member={member} />
         </div>
       )}
 
