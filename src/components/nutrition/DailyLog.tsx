@@ -31,6 +31,9 @@ const MEAL_EMOJI: Record<MealType, string> = {
 
 export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Props) {
   const [meals, setMeals] = useState<Meal[]>(log.meals);
+  const [waterMl, setWaterMl] = useState<number>(log.waterMl ?? 0);
+  const [waterInput, setWaterInput] = useState("");
+  const [waterUnit, setWaterUnit] = useState<"ml" | "L">("ml");
   const [addingTo, setAddingTo] = useState<MealType | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveErr, setSaveErr] = useState("");
@@ -89,11 +92,19 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
     );
   }
 
+  function addWater() {
+    const val = parseFloat(waterInput);
+    if (!val || val <= 0) return;
+    const ml = waterUnit === "L" ? Math.round(val * 1000) : Math.round(val);
+    setWaterMl((prev) => prev + ml);
+    setWaterInput("");
+  }
+
   async function handleSave() {
     setSaving(true);
     setSaveErr("");
     try {
-      await onSave({ ...log, meals });
+      await onSave({ ...log, meals, waterMl });
     } catch {
       setSaveErr("Failed to save. Try again.");
     } finally {
@@ -237,6 +248,50 @@ export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Pr
           </div>
         );
       })}
+
+      {/* Water tracking */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-50">
+          <div className="flex items-center gap-2">
+            <span className="text-base">💧</span>
+            <span className="text-sm font-semibold text-gray-800">Water</span>
+            {waterMl > 0 && (
+              <span className="text-xs text-gray-400">
+                {waterMl >= 1000 ? `${(waterMl / 1000).toFixed(2).replace(/\.?0+$/, "")}L` : `${waterMl}ml`}
+              </span>
+            )}
+          </div>
+          {waterMl > 0 && (
+            <button onClick={() => setWaterMl(0)} className="text-xs text-red-400 active:opacity-70">Reset</button>
+          )}
+        </div>
+        <div className="px-4 py-3 flex items-center gap-2">
+          <input
+            type="number"
+            value={waterInput}
+            onChange={(e) => setWaterInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addWater()}
+            placeholder="Amount"
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-blue-400"
+            style={{ fontSize: "16px" }}
+          />
+          <select
+            value={waterUnit}
+            onChange={(e) => setWaterUnit(e.target.value as "ml" | "L")}
+            className="text-sm border border-gray-200 rounded-lg px-2 py-2 outline-none focus:border-blue-400 bg-white"
+          >
+            <option value="ml">ml</option>
+            <option value="L">L</option>
+          </select>
+          <button
+            onClick={addWater}
+            className="h-10 px-4 rounded-lg text-xs font-semibold text-white active:scale-95 transition-all"
+            style={{ background: "#2563eb" }}
+          >
+            Add
+          </button>
+        </div>
+      </div>
 
       {/* Save button */}
       {saveErr && <p className="text-xs text-red-500 text-center">{saveErr}</p>}

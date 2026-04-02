@@ -36,6 +36,7 @@ export type DailyLog = {
   date: string;
   memberId: string;
   meals: Meal[];
+  waterMl?: number;
 };
 
 export type NutritionData = {
