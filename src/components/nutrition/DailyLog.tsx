@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FamilyMember,
   DailyLog as DailyLogType,
@@ -32,6 +32,11 @@ const MEAL_EMOJI: Record<MealType, string> = {
 export function DailyLog({ member, log, date, onDateChange, onSave, onBack }: Props) {
   const [meals, setMeals] = useState<Meal[]>(log.meals);
   const [waterMl, setWaterMl] = useState<number>(log.waterMl ?? 0);
+
+  useEffect(() => {
+    setMeals(log.meals);
+    setWaterMl(log.waterMl ?? 0);
+  }, [log]);
   const [waterInput, setWaterInput] = useState("");
   const [waterUnit, setWaterUnit] = useState<"ml" | "L">("ml");
   const [addingTo, setAddingTo] = useState<MealType | null>(null);
