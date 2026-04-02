@@ -1,15 +1,6 @@
 {
   "members": [
     {
-      "name": "Subu",
-      "age": 42,
-      "gender": "male",
-      "weightKg": 85,
-      "heightCm": 182,
-      "activityLevel": "moderately_active",
-      "id": "fad06cac-d652-47a1-a99b-c073cb868ae7"
-    },
-    {
       "name": "Neelu",
       "age": 37,
       "gender": "female",
@@ -28,27 +19,5 @@
       "id": "7221d95c-6563-4b69-9cf1-e2048352ef16"
     }
   ],
-  "logs": [
-    {
-      "date": "2026-03-31",
-      "memberId": "fad06cac-d652-47a1-a99b-c073cb868ae7",
-      "meals": [
-        {
-          "id": "8249f29c-4826-49ea-a00a-20ac8e5396ff",
-          "type": "breakfast",
-          "foods": [
-            {
-              "fdcId": "2670056",
-              "name": "LATTE DA MACADAMIA MILK, LATTE DA",
-              "portionGrams": 1,
-              "calories": 0,
-              "proteinG": 0,
-              "carbsG": 0,
-              "fatG": 0
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  "logs": []
 }
