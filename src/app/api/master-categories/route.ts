@@ -9,7 +9,7 @@ const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimb1@gmail.com", "s
 async function getUserInfo() {
   const user = await currentUser();
   const email = user?.emailAddresses?.[0]?.emailAddress ?? "";
-  const name = user?.firstName ?? email.split("@")[0] ?? "unknown";
+  const name = email.split("@")[0] ?? "unknown";
   return { email, name };
 }
 
