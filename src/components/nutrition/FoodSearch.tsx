@@ -38,6 +38,63 @@ const UNIT_LABELS: Record<PortionUnit, string> = {
   tbsp: "tablespoon (~15g)",
 };
 
+const FOOD_EMOJI_MAP: [RegExp, string][] = [
+  [/rice|biryani|pulao/i, "🍚"],
+  [/bread|roti|chapati|naan|toast|paratha/i, "🫓"],
+  [/chicken|poultry/i, "🍗"],
+  [/egg/i, "🥚"],
+  [/fish|salmon|tuna|cod|prawn|shrimp/i, "🐟"],
+  [/mutton|lamb|beef|pork|meat/i, "🥩"],
+  [/milk|dairy/i, "🥛"],
+  [/cheese|paneer/i, "🧀"],
+  [/yogurt|curd/i, "🫙"],
+  [/butter|ghee/i, "🧈"],
+  [/apple/i, "🍎"],
+  [/banana/i, "🍌"],
+  [/orange/i, "🍊"],
+  [/mango/i, "🥭"],
+  [/grape/i, "🍇"],
+  [/watermelon/i, "🍉"],
+  [/strawberr/i, "🍓"],
+  [/lemon|lime/i, "🍋"],
+  [/potato|aloo/i, "🥔"],
+  [/tomato/i, "🍅"],
+  [/onion/i, "🧅"],
+  [/carrot/i, "🥕"],
+  [/spinach|palak|greens|lettuce/i, "🥬"],
+  [/broccoli/i, "🥦"],
+  [/corn|maize/i, "🌽"],
+  [/mushroom/i, "🍄"],
+  [/pepper|capsicum/i, "🫑"],
+  [/cucumber/i, "🥒"],
+  [/peanut|groundnut/i, "🥜"],
+  [/almond|cashew|nut/i, "🌰"],
+  [/dal|lentil|legume|bean|pea|chana/i, "🫘"],
+  [/oil|olive/i, "🫒"],
+  [/sugar|sweet/i, "🍬"],
+  [/chocolate/i, "🍫"],
+  [/cake|pastry|cookie/i, "🍰"],
+  [/pizza/i, "🍕"],
+  [/burger/i, "🍔"],
+  [/soup|stew|curry/i, "🍲"],
+  [/salad/i, "🥗"],
+  [/oat|cereal/i, "🥣"],
+  [/coffee/i, "☕"],
+  [/tea/i, "🍵"],
+  [/juice/i, "🧃"],
+  [/water/i, "💧"],
+  [/quinoa/i, "🌾"],
+  [/tofu|soy/i, "🫘"],
+  [/avocado/i, "🥑"],
+];
+
+function getFoodEmoji(name: string): string {
+  for (const [pattern, emoji] of FOOD_EMOJI_MAP) {
+    if (pattern.test(name)) return emoji;
+  }
+  return "🍽️";
+}
+
 const COMMON_FOODS: UsdaResult[] = [
   {
     fdcId: "common-water",
@@ -138,12 +195,15 @@ export function FoodSearch({ onAdd }: Props) {
               key={food.fdcId}
               type="button"
               onClick={() => selectFood(food)}
-              className="w-full text-left px-3 py-2.5 active:bg-gray-50 transition-colors"
+              className="w-full text-left px-3 py-2.5 active:bg-gray-50 transition-colors flex items-center gap-3"
             >
-              <p className="text-sm text-gray-800 leading-snug">{food.name}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {Math.round(food.caloriesPer100g)} kcal · {Math.round(food.proteinPer100g)}g protein per 100g
-              </p>
+              <span className="text-2xl flex-shrink-0">{getFoodEmoji(food.name)}</span>
+              <div className="min-w-0">
+                <p className="text-sm text-gray-800 leading-snug">{food.name}</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {Math.round(food.caloriesPer100g)} kcal · {Math.round(food.proteinPer100g)}g protein per 100g
+                </p>
+              </div>
             </button>
           ))}
         </div>
