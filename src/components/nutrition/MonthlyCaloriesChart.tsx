@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import {
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -93,7 +94,7 @@ export function MonthlyCaloriesChart({ members, logs }: Props) {
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height={160}>
-        <BarChart data={data} barSize={6} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+        <ComposedChart data={data} barSize={6} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
           <XAxis
             dataKey="day"
             tick={{ fontSize: 9, fill: "#9ca3af" }}
@@ -145,7 +146,16 @@ export function MonthlyCaloriesChart({ members, logs }: Props) {
           {tdee === 0 && (
             <Bar dataKey="calories" radius={[3, 3, 0, 0]} fill="#16a34a" />
           )}
-        </BarChart>
+          <Line
+            dataKey="calories"
+            type="monotone"
+            dot={false}
+            stroke="#6366f1"
+            strokeWidth={1.5}
+            strokeOpacity={0.6}
+            connectNulls={false}
+          />
+        </ComposedChart>
       </ResponsiveContainer>
 
       {/* Legend */}
