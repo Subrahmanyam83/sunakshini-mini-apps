@@ -171,6 +171,38 @@
       ],
       "waterMl": 0,
       "exercises": []
+    },
+    {
+      "date": "2026-04-03",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "419ee314-a6b5-4a9c-bf33-29872a4ab202",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2707714",
+              "name": "Bread, puri",
+              "portionGrams": 100,
+              "calories": 409,
+              "proteinG": 6.8,
+              "carbsG": 39.2,
+              "fatG": 24.9
+            },
+            {
+              "fdcId": "2709510",
+              "name": "Potato patty",
+              "portionGrams": 120,
+              "calories": 205,
+              "proteinG": 4.7,
+              "carbsG": 16.2,
+              "fatG": 13.6
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
