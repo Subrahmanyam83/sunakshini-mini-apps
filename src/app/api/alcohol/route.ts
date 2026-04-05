@@ -12,7 +12,12 @@ const UNIT_ML: Record<DrinkUnit, number> = {
 };
 
 const SHARED_ALCOHOL_PATH = "src/app/alcohol/data/shared.json";
-const SEED_PATH = "src/app/alcohol/users/saineelimab1/data.json";
+// All personal files to merge when initialising the shared file
+const SEED_PATHS = [
+  "src/app/alcohol/users/saineelimab1/data.json",
+  "src/app/alcohol/users/saineelimb1/data.json",
+  "src/app/alcohol/users/gibraltor999/data.json",
+];
 const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimb1@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
@@ -27,7 +32,7 @@ async function getAlcoholPath(email: string, name: string): Promise<{ path: stri
   return { path: `src/app/alcohol/users/${name}/data.json`, shared: false };
 }
 
-/** For privileged users: return shared data, seeding from saineelimab1 if shared doesn't exist yet */
+/** For privileged users: return shared data, merging all personal files if shared doesn't exist yet */
 async function getSharedData(): Promise<{ data: AlcoholData; sha: string }> {
   const shared = await getFileOrDefault<AlcoholData>(SHARED_ALCOHOL_PATH, DEFAULT_ALCOHOL);
   const parsed: AlcoholData = JSON.parse(shared.content);
@@ -36,13 +41,28 @@ async function getSharedData(): Promise<{ data: AlcoholData; sha: string }> {
     return { data: parsed, sha: shared.sha };
   }
 
-  // Shared file missing — seed from saineelimab1's personal file
-  const seed = await getFileOrDefault<AlcoholData>(SEED_PATH, DEFAULT_ALCOHOL);
-  const seedData: AlcoholData = JSON.parse(seed.content);
-  if (seedData.entries.length > 0) {
-    await updateFile(SHARED_ALCOHOL_PATH, JSON.stringify(seedData, null, 2) + "\n", "", "chore: migrate alcohol data to shared file");
+  // Shared file missing — merge all personal files into one shared file
+  const allEntries: AlcoholEntry[] = [];
+  const seenIds = new Set<string>();
+
+  for (const seedPath of SEED_PATHS) {
+    const seed = await getFileOrDefault<AlcoholData>(seedPath, DEFAULT_ALCOHOL);
+    const seedData: AlcoholData = JSON.parse(seed.content);
+    for (const entry of seedData.entries) {
+      if (!seenIds.has(entry.id)) {
+        seenIds.add(entry.id);
+        allEntries.push(entry);
+      }
+    }
   }
-  return { data: seedData, sha: "" };
+
+  allEntries.sort((a, b) => a.date.localeCompare(b.date));
+  const merged: AlcoholData = { entries: allEntries };
+
+  if (allEntries.length > 0) {
+    await updateFile(SHARED_ALCOHOL_PATH, JSON.stringify(merged, null, 2) + "\n", "", "chore: merge alcohol data into shared file");
+  }
+  return { data: merged, sha: "" };
 }
 
 export async function GET(req: NextRequest) {
