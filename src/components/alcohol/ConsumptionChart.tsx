@@ -29,10 +29,10 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export function ConsumptionChart({ data }: Props) {
-  const chartData = data.map((d) => ({ date: fmt(d.date), ml: d.totalMl }));
+  const chartData = data.slice(-15).map((d) => ({ date: fmt(d.date), ml: d.totalMl }));
 
   return (
-    <CollapsibleSection title="Consumption Chart" defaultOpen={true} badge={`${data.length}d`}>
+    <CollapsibleSection title="Last 15 Drinks" defaultOpen={true} badge={`${chartData.length}`}>
       {data.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-32 text-gray-300 text-sm gap-2">
           <span className="text-2xl">—</span>
