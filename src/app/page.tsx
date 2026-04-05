@@ -21,11 +21,11 @@ export default async function Home() {
       <div
         className="sticky top-0 z-20 flex-shrink-0"
         style={{
-          background: "rgba(255,255,255,0.95)",
+          background: "rgba(232,237,245,0.97)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1.5px solid #e5e7eb",
-          boxShadow: "0 1px 12px rgba(0,0,0,0.06)",
+          borderBottom: "1.5px solid #d8dde8",
+          boxShadow: "0 1px 12px rgba(99,102,241,0.07)",
         }}
       >
         <div className="w-full max-w-md mx-auto px-4 py-3 flex items-center justify-between">
