@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SKILL_KEYWORDS = [
   // Languages
-  "JavaScript","TypeScript","Python","Java","C#","C++","Go","Rust","Swift","Kotlin","PHP","Ruby","Scala","R",
+  "JavaScript","TypeScript","Python","Java","C#","C++","Golang","Rust","Swift","Kotlin","PHP","Ruby","Scala",
   // Frontend
   "React","Next.js","Vue","Angular","Svelte","HTML","CSS","Tailwind","Redux","GraphQL","REST",
   // Backend
@@ -97,12 +97,13 @@ function extractSkills(text: string): string[] {
 }
 
 function generateJobTitles(currentRole: string): string[] {
+  if (!currentRole?.trim()) return [];
   const lower = currentRole.toLowerCase();
   for (const [keyword, titles] of Object.entries(ROLE_TO_TITLES)) {
     if (lower.includes(keyword)) return titles;
   }
-  // Fallback — use the current role + common progressions
-  return [currentRole, `Senior ${currentRole}`, `Lead ${currentRole}`, `Head of ${currentRole.replace(/^senior\s+/i, "")}`];
+  // Fallback — only use the role itself if we can't map it
+  return [currentRole];
 }
 
 export async function POST(req: NextRequest) {

@@ -85,7 +85,22 @@ export function ProfileSetup({ initial, onSave }: Props) {
         {cvText && !parsing && (
           <div className="space-y-2 pt-1">
             {fullName && <p className="text-xs text-gray-700 font-medium">👤 {fullName}</p>}
-            {currentRole && <p className="text-xs text-gray-600">💼 {currentRole}{yearsOfExperience ? ` · ${yearsOfExperience} yrs` : ""}</p>}
+            {currentRole
+              ? <p className="text-xs text-gray-600">💼 {currentRole}{yearsOfExperience ? ` · ${yearsOfExperience} yrs` : ""}</p>
+              : (
+                <div className="space-y-1">
+                  <p className="text-xs text-orange-500">⚠ Couldn't detect your role — enter it below:</p>
+                  <input
+                    type="text"
+                    value={currentRole}
+                    onChange={(e) => setCurrentRole(e.target.value)}
+                    placeholder="e.g. Senior Software Engineer"
+                    className="w-full text-sm border border-orange-200 rounded-xl px-3 py-2 outline-none focus:border-indigo-400"
+                    style={{ fontSize: "16px" }}
+                  />
+                </div>
+              )
+            }
             {skills.length > 0 && (
               <div>
                 <p className="text-xs text-gray-400 mb-1">Skills found:</p>
