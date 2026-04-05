@@ -21,8 +21,8 @@ export async function GET() {
 
     if (PRIVILEGED_EMAILS.includes(email)) {
       // Try shared file first
-      const shared = await getFileOrDefault<GroceryItem[]>(SHARED_ITEMS_PATH, null);
-      const parsed: GroceryItem[] | null = JSON.parse(shared.content);
+      const shared = await getFileOrDefault<GroceryItem[]>(SHARED_ITEMS_PATH, []);
+      const parsed: GroceryItem[] = JSON.parse(shared.content);
 
       // Shared file exists and has data — return it
       if (shared.sha && Array.isArray(parsed)) {

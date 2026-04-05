@@ -29,10 +29,10 @@ async function getAlcoholPath(email: string, name: string): Promise<{ path: stri
 
 /** For privileged users: return shared data, seeding from saineelimab1 if shared doesn't exist yet */
 async function getSharedData(): Promise<{ data: AlcoholData; sha: string }> {
-  const shared = await getFileOrDefault<AlcoholData>(SHARED_ALCOHOL_PATH, null);
-  const parsed: AlcoholData | null = JSON.parse(shared.content);
+  const shared = await getFileOrDefault<AlcoholData>(SHARED_ALCOHOL_PATH, DEFAULT_ALCOHOL);
+  const parsed: AlcoholData = JSON.parse(shared.content);
 
-  if (shared.sha && parsed !== null) {
+  if (shared.sha) {
     return { data: parsed, sha: shared.sha };
   }
 
