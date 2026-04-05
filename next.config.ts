@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["recharts"],
-  serverExternalPackages: ["pdf-parse"],
+  serverExternalPackages: ["unpdf"],
 };
 
 export default nextConfig;

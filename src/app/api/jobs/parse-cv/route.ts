@@ -113,12 +113,9 @@ export async function POST(req: NextRequest) {
 
     if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParseModule = require("pdf-parse");
-    const pdfParse = pdfParseModule.default ?? pdfParseModule;
-    const parsed = await pdfParse(buffer);
-    const text = parsed.text;
+    const buffer = new Uint8Array(await file.arrayBuffer());
+    const { extractText } = await import("unpdf");
+    const { text } = await extractText(buffer, { mergePages: true });
 
     const skills = extractSkills(text);
     const extractedName = extractName(text);
