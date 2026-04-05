@@ -4,7 +4,7 @@ import { getFile, getFileOrDefault, updateFile } from "@/lib/github";
 import { MasterCategory } from "@/lib/use-master-list";
 
 const SHARED_MASTER_PATH = "src/app/groceries/data/master-categories.json";
-const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimb1@gmail.com", "saineelimab1@gmail.com"];
+const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
   const user = await currentUser();

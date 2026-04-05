@@ -15,10 +15,9 @@ const SHARED_ALCOHOL_PATH = "src/app/alcohol/data/shared.json";
 // All personal files to merge when initialising the shared file
 const SEED_PATHS = [
   "src/app/alcohol/users/saineelimab1/data.json",
-  "src/app/alcohol/users/saineelimb1/data.json",
   "src/app/alcohol/users/gibraltor999/data.json",
 ];
-const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimb1@gmail.com", "saineelimab1@gmail.com"];
+const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
   const user = await currentUser();

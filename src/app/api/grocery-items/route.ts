@@ -6,7 +6,7 @@ import { GroceryItem } from "@/lib/use-grocery-items";
 const SHARED_ITEMS_PATH = "src/app/groceries/data/items.json";
 // Personal file of the primary user — used as seed if shared file doesn't exist yet
 const SEED_PATH = "src/app/groceries/users/saineelimab1/items.json";
-const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimb1@gmail.com", "saineelimab1@gmail.com"];
+const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
   const user = await currentUser();
