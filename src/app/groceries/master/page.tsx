@@ -61,7 +61,29 @@ export default function MasterListPage() {
       <div className="w-full px-4 pt-20 pb-8">
         {loading && <p className="text-center text-sm text-gray-400 py-12">Loading...</p>}
         {error && <p className="text-center text-sm text-red-400 py-12">{error}</p>}
-        {!loading && !error && <MasterList
+        {!loading && !error && categories.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <p className="text-base font-semibold text-gray-700 mb-1">Your master list is empty</p>
+            <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+              Create categories like <span className="font-medium text-gray-500">Vegetables</span>, <span className="font-medium text-gray-500">Dairy</span>, or <span className="font-medium text-gray-500">Snacks</span> and add items to them.
+            </p>
+            <button
+              onClick={() => setAdding(true)}
+              className="flex items-center gap-2 bg-emerald-600 text-white rounded-xl px-5 py-2.5 text-sm font-semibold active:scale-95 transition-transform"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 5v14M5 12h14" />
+              </svg>
+              Add your first category
+            </button>
+          </div>
+        )}
+        {!loading && !error && categories.length > 0 && <MasterList
           categories={categories}
           deleteCategory={deleteCategory}
           renameCategory={renameCategory}
