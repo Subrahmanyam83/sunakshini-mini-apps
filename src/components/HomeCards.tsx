@@ -149,70 +149,58 @@ function AppCard({ app, index }: { app: typeof appDefs[0]; index: number }) {
   }, [index]);
 
   return (
-    <>
-      <Link href={app.href} className="block group card-link">
-        {/* Animated gradient border wrapper */}
+    <Link href={app.href} className="block group">
+      {/* Animated gradient border wrapper */}
+      <div
+        className="p-[3px] rounded-[20px] transition-all duration-300 ease-out group-hover:scale-[1.025] group-hover:-translate-y-1 group-active:scale-[0.97]"
+        style={{
+          background: `linear-gradient(135deg, ${app.borderColors})`,
+          backgroundSize: "300% 300%",
+          animation: `gradientShift${index} 4s ease infinite`,
+          boxShadow: `0 6px 24px -6px ${app.iconShadow}`,
+          opacity: visible ? 1 : 0,
+          transform: visible ? "translateY(0) scale(1)" : "translateY(18px) scale(0.97)",
+          transition: "opacity 0.4s cubic-bezier(0.34,1.56,0.64,1), transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease",
+        }}
+      >
+        {/* Card inner */}
         <div
-          className={`p-[3px] rounded-[20px] card-border-${index} transition-all duration-300 ease-out
-            group-hover:scale-[1.025] group-hover:-translate-y-1 group-active:scale-[0.97]`}
-          style={{
-            background: `linear-gradient(135deg, ${app.borderColors})`,
-            backgroundSize: "300% 300%",
-            animation: `gradientShift${index} 4s ease infinite`,
-            boxShadow: `0 6px 24px -6px ${app.iconShadow}`,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0) scale(1)" : "translateY(18px) scale(0.97)",
-            transition: "opacity 0.4s cubic-bezier(0.34,1.56,0.64,1), transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease",
-          }}
+          className="rounded-[17px] flex items-center gap-4 px-4 py-[15px]"
+          style={{ background: `linear-gradient(135deg, #ffffff 0%, ${app.cardTint} 100%)` }}
         >
-          {/* Card inner */}
+          {/* Icon with glow */}
           <div
-            className="rounded-[17px] flex items-center gap-4 px-4 py-[15px]"
-            style={{ background: `linear-gradient(135deg, #ffffff 0%, ${app.cardTint} 100%)` }}
+            className="w-[56px] h-[56px] rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
+            style={{
+              background: app.iconBg,
+              boxShadow: `0 6px 16px -3px ${app.iconShadow}`,
+            }}
           >
-            {/* Icon with glow */}
-            <div
-              className="w-[56px] h-[56px] rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
-              style={{
-                background: app.iconBg,
-                boxShadow: `0 6px 16px -3px ${app.iconShadow}`,
-              }}
-            >
-              {app.icon}
-            </div>
+            {app.icon}
+          </div>
 
-            {/* Text */}
-            <div className="flex-1 min-w-0">
-              <p className="text-[15px] font-bold leading-tight tracking-tight" style={{ color: "#111827" }}>
-                {app.name}
-              </p>
-              <p className="text-[12.5px] mt-[4px] leading-snug font-medium" style={{ color: "#6b7280" }}>
-                {app.description}
-              </p>
-            </div>
+          {/* Text */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[15px] font-bold leading-tight tracking-tight" style={{ color: "#111827" }}>
+              {app.name}
+            </p>
+            <p className="text-[12.5px] mt-[4px] leading-snug font-medium" style={{ color: "#6b7280" }}>
+              {app.description}
+            </p>
+          </div>
 
-            {/* Arrow badge */}
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:translate-x-1"
-              style={{ background: "rgba(0,0,0,0.05)" }}
-            >
-              <svg className="w-4 h-4" style={{ color: "#9ca3af" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
+          {/* Arrow badge */}
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:translate-x-1"
+            style={{ background: "rgba(0,0,0,0.05)" }}
+          >
+            <svg className="w-4 h-4" style={{ color: "#9ca3af" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
         </div>
-      </Link>
-
-      {/* Staggered keyframe per card so each flows at slightly different speed */}
-      <style>{`
-        @keyframes gradientShift${index} {
-          0%   { background-position: 0% 50%; }
-          50%  { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
-    </>
+      </div>
+    </Link>
   );
 }
 

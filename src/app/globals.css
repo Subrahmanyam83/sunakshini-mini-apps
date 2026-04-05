@@ -139,6 +139,38 @@
   to   { max-height: 800px; opacity: 1; }
 }
 
+/* AnimatedTitle */
+@keyframes titleRainbow {
+  0%   { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+@keyframes titlePopIn {
+  0%   { opacity: 0; transform: scale(0.85) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* HomeCards gradient border flow — one per card index for varied speed */
+@keyframes gradientShift0 {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes gradientShift1 {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes gradientShift2 {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes gradientShift3 {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
 .header-gradient {
