@@ -36,6 +36,47 @@ const ROLE_TO_TITLES: Record<string, string[]> = {
   "director": ["Director of Engineering", "VP Engineering", "Head of Engineering", "Engineering Director"],
 };
 
+function extractYearsOfExperience(text: string): number | null {
+  // Match patterns like "10 years", "10+ years", "10 years of experience"
+  const patterns = [
+    /(\d+)\+?\s+years?\s+of\s+(professional\s+)?experience/i,
+    /experience\s+of\s+(\d+)\+?\s+years?/i,
+    /(\d+)\+?\s+years?\s+experience/i,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return parseInt(match[1]);
+  }
+
+  // Fallback: find earliest year in work history and calculate
+  const yearMatches = text.match(/\b(19|20)\d{2}\b/g);
+  if (yearMatches && yearMatches.length >= 2) {
+    const years = yearMatches.map(Number);
+    const earliest = Math.min(...years);
+    const latest = Math.max(...years);
+    const current = new Date().getFullYear();
+    const calc = current - earliest;
+    if (calc > 0 && calc < 50) return calc;
+  }
+  return null;
+}
+
+function extractCurrentRole(text: string): string | null {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+
+  const rolePatterns = [
+    /^(senior|lead|principal|staff|junior|associate|head of|vp|director|chief|cto|ceo|coo|manager)?\s*(software|full.?stack|frontend|backend|data|ml|ai|devops|product|cloud|mobile|platform|qa|site reliability|security)?\s*(engineer|developer|architect|scientist|analyst|manager|designer|consultant|lead|specialist|officer)\b/i,
+  ];
+
+  for (const line of lines.slice(0, 30)) {
+    for (const pattern of rolePatterns) {
+      const match = line.match(pattern);
+      if (match && match[0].length > 4) return match[0].trim();
+    }
+  }
+  return null;
+}
+
 function extractSkills(text: string): string[] {
   const found = new Set<string>();
   const lower = text.toLowerCase();
@@ -68,9 +109,19 @@ export async function POST(req: NextRequest) {
     const text = parsed.text;
 
     const skills = extractSkills(text);
-    const preferredRoles = generateJobTitles(currentRole);
+    const extractedRole = extractCurrentRole(text);
+    const extractedYears = extractYearsOfExperience(text);
+    const roleToUse = extractedRole ?? currentRole;
+    const preferredRoles = generateJobTitles(roleToUse);
 
-    return NextResponse.json({ text, fileName: file.name, skills, preferredRoles });
+    return NextResponse.json({
+      text,
+      fileName: file.name,
+      skills,
+      preferredRoles,
+      extractedRole,
+      extractedYears,
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to parse CV" }, { status: 500 });

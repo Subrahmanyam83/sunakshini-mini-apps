@@ -38,6 +38,8 @@ export function ProfileSetup({ initial, onSave }: Props) {
       setCvFileName(json.fileName);
       setSkills(json.skills ?? []);
       setPreferredRoles(json.preferredRoles ?? []);
+      if (json.extractedRole) setCurrentRole(json.extractedRole);
+      if (json.extractedYears) setYearsOfExperience(String(json.extractedYears));
     } catch (err) {
       setParseErr(err instanceof Error ? err.message : "Failed to parse CV");
     } finally {
@@ -85,7 +87,7 @@ export function ProfileSetup({ initial, onSave }: Props) {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
         <div>
           <p className="text-sm font-semibold text-gray-700">Upload CV <span className="text-xs font-normal text-gray-400">(PDF)</span></p>
-          <p className="text-xs text-gray-400 mt-0.5">We'll auto-extract your skills and find the best matching job titles</p>
+          <p className="text-xs text-gray-400 mt-0.5">We'll auto-extract your skills, job title and years of experience</p>
         </div>
         <input ref={fileRef} type="file" accept=".pdf" className="hidden" onChange={handleCvUpload} />
         <button
