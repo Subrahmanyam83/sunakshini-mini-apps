@@ -12,11 +12,11 @@ export function ProfileSetup({ initial, onSave }: Props) {
   const [fullName, setFullName] = useState(initial?.fullName ?? "");
   const [currentRole, setCurrentRole] = useState(initial?.currentRole ?? "");
   const [yearsOfExperience, setYearsOfExperience] = useState(String(initial?.yearsOfExperience ?? ""));
-  const [skillsInput, setSkillsInput] = useState(initial?.skills?.join(", ") ?? "");
-  const [rolesInput, setRolesInput] = useState(initial?.preferredRoles?.join(", ") ?? "");
   const [preferredLocation, setPreferredLocation] = useState(initial?.preferredLocation ?? "");
   const [cvText, setCvText] = useState(initial?.cvText ?? "");
   const [cvFileName, setCvFileName] = useState(initial?.cvFileName ?? "");
+  const [skills, setSkills] = useState<string[]>(initial?.skills ?? []);
+  const [preferredRoles, setPreferredRoles] = useState<string[]>(initial?.preferredRoles ?? []);
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState("");
   const [saving, setSaving] = useState(false);
@@ -30,11 +30,14 @@ export function ProfileSetup({ initial, onSave }: Props) {
     try {
       const form = new FormData();
       form.append("cv", file);
+      form.append("currentRole", currentRole);
       const res = await fetch("/api/jobs/parse-cv", { method: "POST", body: form });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       setCvText(json.text);
       setCvFileName(json.fileName);
+      setSkills(json.skills ?? []);
+      setPreferredRoles(json.preferredRoles ?? []);
     } catch (err) {
       setParseErr(err instanceof Error ? err.message : "Failed to parse CV");
     } finally {
@@ -45,22 +48,13 @@ export function ProfileSetup({ initial, onSave }: Props) {
   async function handleSave() {
     setSaving(true);
     try {
-      await onSave({
-        fullName,
-        currentRole,
-        yearsOfExperience: Number(yearsOfExperience),
-        skills: skillsInput.split(",").map((s) => s.trim()).filter(Boolean),
-        preferredRoles: rolesInput.split(",").map((s) => s.trim()).filter(Boolean),
-        preferredLocation,
-        cvText,
-        cvFileName,
-      });
+      await onSave({ fullName, currentRole, yearsOfExperience: Number(yearsOfExperience), skills, preferredRoles, preferredLocation, cvText, cvFileName });
     } finally {
       setSaving(false);
     }
   }
 
-  const isValid = fullName && currentRole && skillsInput && rolesInput;
+  const isValid = fullName && currentRole && cvText;
 
   return (
     <div className="space-y-4">
@@ -69,7 +63,7 @@ export function ProfileSetup({ initial, onSave }: Props) {
 
         {[
           { label: "Full Name", value: fullName, set: setFullName, placeholder: "e.g. Subrahmanyam Rentala" },
-          { label: "Current Role", value: currentRole, set: setCurrentRole, placeholder: "e.g. Senior Software Engineer" },
+          { label: "Current Role / Job Title", value: currentRole, set: setCurrentRole, placeholder: "e.g. Senior Software Engineer" },
           { label: "Years of Experience", value: yearsOfExperience, set: setYearsOfExperience, placeholder: "e.g. 10", type: "number" },
           { label: "Preferred Location", value: preferredLocation, set: setPreferredLocation, placeholder: "e.g. Hyderabad, Remote" },
         ].map(({ label, value, set, placeholder, type }) => (
@@ -85,52 +79,54 @@ export function ProfileSetup({ initial, onSave }: Props) {
             />
           </div>
         ))}
-
-        <div className="space-y-1">
-          <label className="text-xs text-gray-500">Key Skills <span className="text-gray-400">(comma separated)</span></label>
-          <input
-            type="text"
-            value={skillsInput}
-            onChange={(e) => setSkillsInput(e.target.value)}
-            placeholder="e.g. React, Node.js, Python, AWS"
-            className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-indigo-400"
-            style={{ fontSize: "16px" }}
-          />
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-xs text-gray-500">Preferred Job Titles <span className="text-gray-400">(comma separated)</span></label>
-          <input
-            type="text"
-            value={rolesInput}
-            onChange={(e) => setRolesInput(e.target.value)}
-            placeholder="e.g. Engineering Manager, Tech Lead, CTO"
-            className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 outline-none focus:border-indigo-400"
-            style={{ fontSize: "16px" }}
-          />
-        </div>
       </div>
 
       {/* CV Upload */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 space-y-3">
-        <p className="text-sm font-semibold text-gray-700">Upload CV <span className="text-xs font-normal text-gray-400">(PDF)</span></p>
+        <div>
+          <p className="text-sm font-semibold text-gray-700">Upload CV <span className="text-xs font-normal text-gray-400">(PDF)</span></p>
+          <p className="text-xs text-gray-400 mt-0.5">We'll auto-extract your skills and find the best matching job titles</p>
+        </div>
         <input ref={fileRef} type="file" accept=".pdf" className="hidden" onChange={handleCvUpload} />
         <button
           onClick={() => fileRef.current?.click()}
-          disabled={parsing}
-          className="w-full h-11 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-500 active:bg-gray-50 transition-all flex items-center justify-center gap-2"
+          disabled={parsing || !currentRole}
+          className="w-full h-11 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-500 active:bg-gray-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {parsing ? (
-            <><div className="w-4 h-4 rounded-full border-2 border-gray-200 border-t-indigo-500 animate-spin" /> Parsing CV…</>
+            <><div className="w-4 h-4 rounded-full border-2 border-gray-200 border-t-indigo-500 animate-spin" /> Extracting skills & job titles…</>
           ) : cvFileName ? (
             <><span>📄</span> {cvFileName} — <span className="text-indigo-500">Replace</span></>
           ) : (
-            <><span>📎</span> Choose PDF</>
+            <><span>📎</span> {currentRole ? "Choose PDF" : "Enter your role first"}</>
           )}
         </button>
         {parseErr && <p className="text-xs text-red-500">{parseErr}</p>}
+
         {cvText && !parsing && (
-          <p className="text-xs text-green-600">✓ CV parsed — {cvText.length} characters extracted</p>
+          <div className="space-y-2">
+            <p className="text-xs text-green-600 font-medium">✓ CV parsed successfully</p>
+            {skills.length > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Skills found ({skills.length}):</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {skills.map((s) => (
+                    <span key={s} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">{s}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {preferredRoles.length > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Job titles to search:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {preferredRoles.map((r) => (
+                    <span key={r} className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">{r}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
