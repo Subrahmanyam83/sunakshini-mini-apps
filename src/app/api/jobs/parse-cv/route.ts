@@ -89,9 +89,12 @@ function extractCurrentRole(text: string): string | null {
 
 function extractSkills(text: string): string[] {
   const found = new Set<string>();
-  const lower = text.toLowerCase();
   for (const skill of SKILL_KEYWORDS) {
-    if (lower.includes(skill.toLowerCase())) found.add(skill);
+    // Escape special regex chars (for C#, C++, Node.js etc.)
+    const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\//g, "\\/");
+    // Use word boundaries — \b works for alphanumeric edges
+    const pattern = new RegExp(`(?<![a-zA-Z0-9])${escaped}(?![a-zA-Z0-9])`, "i");
+    if (pattern.test(text)) found.add(skill);
   }
   return Array.from(found);
 }
