@@ -11,12 +11,10 @@ const UNIT_ML: Record<DrinkUnit, number> = {
   peg: 30,
 };
 
-const SHARED_ALCOHOL_PATH = "src/app/alcohol/data/shared.json";
-// All personal files to merge when initialising the shared file
-const SEED_PATHS = [
-  "src/app/alcohol/users/saineelimab1/data.json",
-  "src/app/alcohol/users/gibraltor999/data.json",
-];
+// Both privileged users share one neutral file — changes from either are visible to both.
+// On first access, the shared file is seeded from gibraltor999's existing personal data.
+const SHARED_PATH = "src/app/alcohol/data/data.json";
+const SEED_PATH = "src/app/alcohol/users/gibraltor999/data.json";
 const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
@@ -26,42 +24,9 @@ async function getUserInfo() {
   return { email, name };
 }
 
-async function getAlcoholPath(email: string, name: string): Promise<{ path: string; shared: boolean }> {
-  if (PRIVILEGED_EMAILS.includes(email)) return { path: SHARED_ALCOHOL_PATH, shared: true };
-  return { path: `src/app/alcohol/users/${name}/data.json`, shared: false };
-}
-
-/** For privileged users: return shared data, merging all personal files if shared doesn't exist yet */
-async function getSharedData(): Promise<{ data: AlcoholData; sha: string }> {
-  const shared = await getFileOrDefault<AlcoholData>(SHARED_ALCOHOL_PATH, DEFAULT_ALCOHOL);
-  const parsed: AlcoholData = JSON.parse(shared.content);
-
-  if (shared.sha) {
-    return { data: parsed, sha: shared.sha };
-  }
-
-  // Shared file missing — merge all personal files into one shared file
-  const allEntries: AlcoholEntry[] = [];
-  const seenIds = new Set<string>();
-
-  for (const seedPath of SEED_PATHS) {
-    const seed = await getFileOrDefault<AlcoholData>(seedPath, DEFAULT_ALCOHOL);
-    const seedData: AlcoholData = JSON.parse(seed.content);
-    for (const entry of seedData.entries) {
-      if (!seenIds.has(entry.id)) {
-        seenIds.add(entry.id);
-        allEntries.push(entry);
-      }
-    }
-  }
-
-  allEntries.sort((a, b) => a.date.localeCompare(b.date));
-  const merged: AlcoholData = { entries: allEntries };
-
-  if (allEntries.length > 0) {
-    await updateFile(SHARED_ALCOHOL_PATH, JSON.stringify(merged, null, 2) + "\n", "", "chore: merge alcohol data into shared file");
-  }
-  return { data: merged, sha: "" };
+function getDataPath(email: string, name: string) {
+  if (PRIVILEGED_EMAILS.includes(email)) return SHARED_PATH;
+  return `src/app/alcohol/users/${name}/data.json`;
 }
 
 export async function GET(req: NextRequest) {
@@ -71,12 +36,33 @@ export async function GET(req: NextRequest) {
     const to = searchParams.get("to");
 
     const { email, name } = await getUserInfo();
+
+    let path: string;
     let data: AlcoholData;
 
     if (PRIVILEGED_EMAILS.includes(email)) {
-      ({ data } = await getSharedData());
+      // Try shared file first
+      const shared = await getFileOrDefault<AlcoholData>(SHARED_PATH, DEFAULT_ALCOHOL);
+      const parsed: AlcoholData = JSON.parse(shared.content);
+
+      // Shared file exists and has data — use it
+      if (shared.sha && parsed.entries.length > 0) {
+        path = SHARED_PATH;
+        data = parsed;
+      } else {
+        // Shared file is missing/empty — seed it from gibraltor999's personal file
+        path = SHARED_PATH;
+        const seed = await getFileOrDefault<AlcoholData>(SEED_PATH, DEFAULT_ALCOHOL);
+        const seedData: AlcoholData = JSON.parse(seed.content);
+        if (seedData.entries.length > 0) {
+          await updateFile(SHARED_PATH, JSON.stringify(seedData, null, 2) + "\n", shared.sha, "chore: migrate alcohol data to shared file");
+          data = seedData;
+        } else {
+          data = DEFAULT_ALCOHOL;
+        }
+      }
     } else {
-      const path = `src/app/alcohol/users/${name}/data.json`;
+      path = getDataPath(email, name);
       const { content } = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
       data = JSON.parse(content);
     }
@@ -110,20 +96,9 @@ export async function POST(req: NextRequest) {
     const newEntry: AlcoholEntry = { id: new Date().toISOString(), date, type, quantity: Number(quantity), unit, totalMl };
 
     const { email, name } = await getUserInfo();
-    let data: AlcoholData;
-    let sha: string;
-    let path: string;
-
-    if (PRIVILEGED_EMAILS.includes(email)) {
-      path = SHARED_ALCOHOL_PATH;
-      ({ data, sha } = await getSharedData());
-    } else {
-      path = `src/app/alcohol/users/${name}/data.json`;
-      const result = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
-      data = JSON.parse(result.content);
-      sha = result.sha;
-    }
-
+    const path = getDataPath(email, name);
+    const { content, sha } = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
+    const data: AlcoholData = JSON.parse(content);
     data.entries.push(newEntry);
     data.entries.sort((a, b) => a.date.localeCompare(b.date));
     await updateFile(path, JSON.stringify(data, null, 2) + "\n", sha, `Add ${type} entry for ${date}`);
@@ -144,20 +119,9 @@ export async function PUT(req: NextRequest) {
     }
 
     const { email, name } = await getUserInfo();
-    let data: AlcoholData;
-    let sha: string;
-    let path: string;
-
-    if (PRIVILEGED_EMAILS.includes(email)) {
-      path = SHARED_ALCOHOL_PATH;
-      ({ data, sha } = await getSharedData());
-    } else {
-      path = `src/app/alcohol/users/${name}/data.json`;
-      const result = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
-      data = JSON.parse(result.content);
-      sha = result.sha;
-    }
-
+    const path = getDataPath(email, name);
+    const { content, sha } = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
+    const data: AlcoholData = JSON.parse(content);
     const idx = data.entries.findIndex((e) => e.id === id);
     if (idx === -1) return NextResponse.json({ error: "Entry not found" }, { status: 404 });
 
@@ -178,20 +142,9 @@ export async function DELETE(req: NextRequest) {
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
     const { email, name } = await getUserInfo();
-    let data: AlcoholData;
-    let sha: string;
-    let path: string;
-
-    if (PRIVILEGED_EMAILS.includes(email)) {
-      path = SHARED_ALCOHOL_PATH;
-      ({ data, sha } = await getSharedData());
-    } else {
-      path = `src/app/alcohol/users/${name}/data.json`;
-      const result = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
-      data = JSON.parse(result.content);
-      sha = result.sha;
-    }
-
+    const path = getDataPath(email, name);
+    const { content, sha } = await getFileOrDefault<AlcoholData>(path, DEFAULT_ALCOHOL);
+    const data: AlcoholData = JSON.parse(content);
     data.entries = data.entries.filter((e) => e.id !== id);
     await updateFile(path, JSON.stringify(data, null, 2) + "\n", sha, `Delete entry ${id}`);
     return NextResponse.json({ success: true });
