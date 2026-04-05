@@ -1,0 +1,67 @@
+[
+  {
+    "id": "fb24563c-4e0e-45e4-8dc9-81b9d17a0380",
+    "name": "Urad Dal - Black",
+    "bought": true
+  },
+  {
+    "id": "d5736f99-fbc7-44b7-a894-af30feac79bf",
+    "name": "Groundnuts",
+    "bought": true
+  },
+  {
+    "id": "6d958b89-cf6c-4190-b633-3e95e9314128",
+    "name": "Moong Dal",
+    "bought": true
+  },
+  {
+    "id": "393aa412-124f-44a8-bfb4-f1af34d8778a",
+    "name": "Raagi",
+    "bought": false
+  },
+  {
+    "id": "00d26368-1e82-460c-be49-1d0e120c8b61",
+    "name": "Olive oil",
+    "bought": false
+  },
+  {
+    "id": "073aa2c3-cc76-41e5-88d0-f38e5d5bebf8",
+    "name": "Nikki multi vatimins",
+    "bought": false
+  },
+  {
+    "id": "75d6acde-1a71-4201-b452-a98e5946c496",
+    "name": "Quinoa",
+    "bought": false
+  },
+  {
+    "id": "36ee8a70-acb7-4c5d-8fd2-ebcc7e805f64",
+    "name": "Puttnalpappu",
+    "bought": false
+  },
+  {
+    "id": "6421c214-bedb-40e4-b342-2dbb4f8e62e4",
+    "name": "Bellam",
+    "bought": false
+  },
+  {
+    "id": "ffea8b64-2281-4ef0-be15-98642b12b7f5",
+    "name": "Airtel pods",
+    "bought": false
+  },
+  {
+    "id": "8c986a57-65d2-4b0a-9387-279dde72ea8c",
+    "name": "Basmati rice",
+    "bought": false
+  },
+  {
+    "id": "32796a95-56da-4654-b359-22a266c92b64",
+    "name": "Rice",
+    "bought": false
+  },
+  {
+    "id": "aa55b734-5eba-47aa-b822-3ae6d805fdbb",
+    "name": "Garlic",
+    "bought": false
+  }
+]
