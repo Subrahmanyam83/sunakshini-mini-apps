@@ -20,6 +20,7 @@ export function ProfileSetup({ initial, onSave }: Props) {
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState("");
   const [saving, setSaving] = useState(false);
+  const [debugLines, setDebugLines] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function handleCvUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -37,6 +38,7 @@ export function ProfileSetup({ initial, onSave }: Props) {
       setCvFileName(json.fileName);
       setSkills(json.skills ?? []);
       setPreferredRoles(json.preferredRoles ?? []);
+      setDebugLines(json.debugLines ?? []);
       if (json.extractedName) setFullName(json.extractedName);
       if (json.extractedRole) setCurrentRole(json.extractedRole);
       if (json.extractedYears) setYearsOfExperience(json.extractedYears);
@@ -98,6 +100,16 @@ export function ProfileSetup({ initial, onSave }: Props) {
                     className="w-full text-sm border border-orange-200 rounded-xl px-3 py-2 outline-none focus:border-indigo-400"
                     style={{ fontSize: "16px" }}
                   />
+                  {debugLines.length > 0 && (
+                    <details className="mt-1">
+                      <summary className="text-[10px] text-gray-400 cursor-pointer">Show raw CV lines (debug)</summary>
+                      <div className="mt-1 bg-gray-50 rounded-lg p-2 max-h-48 overflow-y-auto">
+                        {debugLines.map((line, i) => (
+                          <p key={i} className="text-[10px] text-gray-500 font-mono leading-5">{i + 1}: {line}</p>
+                        ))}
+                      </div>
+                    </details>
+                  )}
                 </div>
               )
             }

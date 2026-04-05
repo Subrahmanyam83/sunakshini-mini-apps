@@ -162,6 +162,9 @@ export async function POST(req: NextRequest) {
     const roleToUse = extractedRole ?? currentRole;
     const preferredRoles = generateJobTitles(roleToUse);
 
+    // Debug: first 60 non-empty lines so we can see the PDF structure
+    const debugLines = text.split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 60);
+
     return NextResponse.json({
       text,
       fileName: file.name,
@@ -170,6 +173,7 @@ export async function POST(req: NextRequest) {
       extractedName,
       extractedRole,
       extractedYears,
+      debugLines,
     });
   } catch (err) {
     console.error(err);
