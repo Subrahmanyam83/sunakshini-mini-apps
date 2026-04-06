@@ -10,17 +10,24 @@ export default async function Home() {
   const firstName = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0];
 
   return (
-    <main className="min-h-screen flex flex-col" style={{ background: "#f0f2f5" }}>
+    <main className="min-h-screen flex flex-col" style={{ background: "#ffffff" }}>
+      {/* Safe-area spacer — on black-translucent PWA installs the page extends
+          behind the status bar. This white spacer fills that gap so the status
+          bar never shows the grey header. On "default" (opaque) installs the
+          env() value is 0 and this div has zero height. */}
+      <div style={{ height: "env(safe-area-inset-top)", background: "#ffffff", flexShrink: 0 }} />
+
       {/* 4px rainbow top accent */}
       <div
         className="h-1 w-full flex-shrink-0"
         style={{ background: "linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #ec4899 50%, #f59e0b 75%, #10b981 100%)" }}
       />
 
-      {/* Sticky header */}
+      {/* Sticky header — sticks just below the status bar / safe-area */}
       <div
-        className="sticky top-0 z-20 flex-shrink-0"
+        className="sticky z-20 flex-shrink-0"
         style={{
+          top: "env(safe-area-inset-top)",
           background: "#c5cdd9",
           borderBottom: "1.5px solid #b4bdc9",
           boxShadow: "0 2px 8px rgba(0,0,0,0.09)",
@@ -40,7 +47,7 @@ export default async function Home() {
       </div>
 
       {/* Page content */}
-      <div className="flex-1">
+      <div className="flex-1" style={{ background: "#f0f2f5" }}>
         <div className="w-full max-w-md mx-auto px-4 pt-6 pb-10">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-5" style={{ color: "#c4c9d4" }}>
             Your Apps
