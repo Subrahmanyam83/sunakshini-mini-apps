@@ -1,12 +1,10 @@
-import { headers } from "next/headers";
 import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { AnimatedTitle } from "@/components/AnimatedTitle";
 import { HomeCards } from "@/components/HomeCards";
 
 export default async function Home() {
-  const [headersList, user] = await Promise.all([headers(), currentUser()]);
-  const hideAlcohol = headersList.get("x-hide-alcohol") === "1";
+  const user = await currentUser();
   const firstName = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0];
 
   return (
@@ -52,7 +50,7 @@ export default async function Home() {
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-5" style={{ color: "#c4c9d4" }}>
             Your Apps
           </p>
-          <HomeCards hideAlcohol={hideAlcohol} />
+          <HomeCards />
         </div>
       </div>
     </main>

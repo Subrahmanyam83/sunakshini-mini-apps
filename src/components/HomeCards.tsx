@@ -75,7 +75,6 @@ const appDefs = [
     iconShadow: "rgba(245,158,11,0.25)",
     cardTint: "rgba(254,243,199,0.5)",
     icon: <BeerIcon />,
-    hideInCountries: ["IN"],
   },
   {
     href: "/cart-mate",
@@ -175,8 +174,8 @@ function AppCard({ app, index }: { app: typeof appDefs[0]; index: number }) {
   );
 }
 
-export function HomeCards({ hideAlcohol }: { hideAlcohol: boolean }) {
-  const visible = appDefs.filter((a) => !(hideAlcohol && a.hideInCountries?.length));
+export function HomeCards() {
+  const visible = appDefs;
   return (
     <div className="flex flex-col gap-4">
       {visible.map((app, i) => (
