@@ -23,14 +23,14 @@ export default async function Home() {
         style={{ background: "linear-gradient(90deg, #6366f1 0%, #8b5cf6 25%, #ec4899 50%, #f59e0b 75%, #10b981 100%)" }}
       />
 
-      {/* Sticky header — white so status bar area blends seamlessly */}
+      {/* Sticky header */}
       <div
         className="sticky z-20 flex-shrink-0"
         style={{
           top: "env(safe-area-inset-top)",
-          background: "#ffffff",
-          borderBottom: "1px solid #e5e7eb",
-          boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+          background: "#c5cdd9",
+          borderBottom: "1.5px solid #b4bdc9",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.09)",
         }}
       >
         <div className="w-full max-w-md mx-auto px-4 py-3 flex items-center justify-between">
