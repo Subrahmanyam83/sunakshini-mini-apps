@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     title: "MiniApps",
     statusBarStyle: "default",
   },
+  themeColor: "#ffffff",
   viewport: {
     width: "device-width",
     initialScale: 1,
