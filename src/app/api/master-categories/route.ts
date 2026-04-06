@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getFile, getFileOrDefault, updateFile } from "@/lib/github";
 import { MasterCategory } from "@/lib/use-master-list";
 
-const SHARED_MASTER_PATH = "src/app/groceries/data/master-categories.json";
+const SHARED_MASTER_PATH = "src/app/cart-mate/data/master-categories.json";
 const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
@@ -16,7 +16,7 @@ async function getUserInfo() {
 function getMasterPath(email: string, name: string) {
   // Privileged users share one master list — changes from either are visible to both
   if (PRIVILEGED_EMAILS.includes(email)) return SHARED_MASTER_PATH;
-  return `src/app/groceries/users/${name}/master-categories.json`;
+  return `src/app/cart-mate/users/${name}/master-categories.json`;
 }
 
 export async function GET() {

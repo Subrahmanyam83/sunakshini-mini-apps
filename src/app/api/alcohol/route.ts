@@ -13,8 +13,8 @@ const UNIT_ML: Record<DrinkUnit, number> = {
 
 // Both privileged users share one neutral file — changes from either are visible to both.
 // On first access, the shared file is seeded from gibraltor999's existing personal data.
-const SHARED_PATH = "src/app/alcohol/data/data.json";
-const SEED_PATH = "src/app/alcohol/users/gibraltor999/data.json";
+const SHARED_PATH = "src/app/sip-log/data/data.json";
+const SEED_PATH = "src/app/sip-log/users/gibraltor999/data.json";
 const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
@@ -26,7 +26,7 @@ async function getUserInfo() {
 
 function getDataPath(email: string, name: string) {
   if (PRIVILEGED_EMAILS.includes(email)) return SHARED_PATH;
-  return `src/app/alcohol/users/${name}/data.json`;
+  return `src/app/sip-log/users/${name}/data.json`;
 }
 
 export async function GET(req: NextRequest) {

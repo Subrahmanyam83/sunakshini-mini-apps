@@ -8,7 +8,7 @@ const DEFAULT_NUTRITION: NutritionData = { members: [], logs: [] };
 async function getUserPath() {
   const user = await currentUser();
   const name = user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] ?? "unknown";
-  return `src/app/nutrition/users/${name}/data.json`;
+  return `src/app/nutri-day/users/${name}/data.json`;
 }
 
 export async function GET() {

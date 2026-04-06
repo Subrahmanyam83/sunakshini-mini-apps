@@ -3,9 +3,9 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getFileOrDefault, updateFile } from "@/lib/github";
 import { GroceryItem } from "@/lib/use-grocery-items";
 
-const SHARED_ITEMS_PATH = "src/app/groceries/data/items.json";
+const SHARED_ITEMS_PATH = "src/app/cart-mate/data/items.json";
 // Personal file of the primary user — used as seed if shared file doesn't exist yet
-const SEED_PATH = "src/app/groceries/users/saineelimab1/items.json";
+const SEED_PATH = "src/app/cart-mate/users/saineelimab1/items.json";
 const PRIVILEGED_EMAILS = ["gibraltor999@gmail.com", "saineelimab1@gmail.com"];
 
 async function getUserInfo() {
@@ -39,7 +39,7 @@ export async function GET() {
       return NextResponse.json(seedData);
     }
 
-    const path = `src/app/groceries/users/${name}/items.json`;
+    const path = `src/app/cart-mate/users/${name}/items.json`;
     const { content } = await getFileOrDefault<GroceryItem[]>(path, []);
     return NextResponse.json(JSON.parse(content));
   } catch (err) {
@@ -55,7 +55,7 @@ export async function PUT(req: NextRequest) {
 
     const path = PRIVILEGED_EMAILS.includes(email)
       ? SHARED_ITEMS_PATH
-      : `src/app/groceries/users/${name}/items.json`;
+      : `src/app/cart-mate/users/${name}/items.json`;
 
     const { sha } = await getFileOrDefault<GroceryItem[]>(path, []);
     await updateFile(path, JSON.stringify(items, null, 2) + "\n", sha, "chore: update grocery items");
