@@ -68,5 +68,10 @@
     "id": "32cdcc40-215f-41a9-b2ab-2fea4b6f4609",
     "name": "test",
     "bought": true
+  },
+  {
+    "id": "cb2b4af3-e151-4a8e-bfcf-97073bb04e39",
+    "name": "Custard powder",
+    "bought": false
   }
 ]
