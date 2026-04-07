@@ -78,5 +78,10 @@
     "id": "42a8a987-ed15-4833-8a25-c413f9cca4e8",
     "name": "Popcorn",
     "bought": false
+  },
+  {
+    "id": "ad14ac43-013b-44ea-bcc5-5fc0215eb307",
+    "name": "Nikki toothpaste",
+    "bought": false
   }
 ]
