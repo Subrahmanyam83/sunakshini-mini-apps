@@ -83,5 +83,10 @@
     "id": "f6485d55-c430-4fe9-bb17-efd3fbbc9d8b",
     "name": "Kotyimeera",
     "bought": true
+  },
+  {
+    "id": "9e4f6c79-c582-4c00-8d36-a33cd387128a",
+    "name": "Paneer",
+    "bought": false
   }
 ]
