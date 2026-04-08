@@ -21,8 +21,11 @@ function BodyPartBadge({ part }: { part: string }) {
   );
 }
 
-function ImageLightbox({ src, alt, onClose, onReplace, onRemove }: {
-  src: string;
+type MediaUpdate = { imageBase64?: string; imageUrl?: string; videoBase64?: string; videoUrl?: string };
+
+function MediaLightbox({ imageSrc, videoSrc, alt, onClose, onReplace, onRemove }: {
+  imageSrc?: string;
+  videoSrc?: string;
   alt: string;
   onClose: () => void;
   onReplace: () => void;
@@ -37,87 +40,85 @@ function ImageLightbox({ src, alt, onClose, onReplace, onRemove }: {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.85)" }}
+      style={{ background: "rgba(0,0,0,0.9)" }}
       onClick={onClose}
     >
       <div className="relative max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
         {/* Top-right action buttons */}
         <div className="absolute -top-3 -right-3 z-10 flex gap-1.5">
-          <button
-            onClick={onReplace}
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "#ea580c", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
-            title="Replace image"
-          >
+          <button onClick={onReplace} className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "#ea580c", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }} title="Replace">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </button>
-          <button
-            onClick={onRemove}
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "#ef4444", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
-            title="Remove image"
-          >
+          <button onClick={onRemove} className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "#ef4444", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }} title="Remove">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
           </button>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
-            title="Close"
-          >
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }} title="Close">
             <svg className="w-4 h-4" style={{ color: "#374151" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <img src={src} alt={alt} className="w-full rounded-2xl" style={{ maxHeight: "70vh", objectFit: "contain" }} />
+        {videoSrc ? (
+          <video src={videoSrc} controls autoPlay loop muted playsInline
+            className="w-full rounded-2xl" style={{ maxHeight: "75vh", objectFit: "contain", background: "#000" }} />
+        ) : imageSrc ? (
+          <img src={imageSrc} alt={alt} className="w-full rounded-2xl" style={{ maxHeight: "75vh", objectFit: "contain" }} />
+        ) : null}
         <p className="text-center text-white text-sm font-medium mt-3 opacity-80">{alt}</p>
       </div>
     </div>
   );
 }
 
-function AddImageModal({ onSave, onClose }: {
-  onSave: (image: { imageBase64?: string; imageUrl?: string }) => void;
+function AddMediaModal({ onSave, onClose }: {
+  onSave: (media: MediaUpdate) => void;
   onClose: () => void;
 }) {
-  const [tab, setTab] = useState<"upload" | "url">("upload");
+  const [tab, setTab] = useState<"photo" | "video" | "url">("photo");
   const [url, setUrl] = useState("");
   const imgRef = useRef<HTMLInputElement>(null);
+  const vidRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
+  const handleImageFile = (file: File) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      onSave({ imageBase64: e.target?.result as string });
-      onClose();
-    };
+    reader.onload = (e) => { onSave({ imageBase64: e.target?.result as string }); onClose(); };
+    reader.readAsDataURL(file);
+  };
+
+  const handleVideoFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => { onSave({ videoBase64: e.target?.result as string }); onClose(); };
     reader.readAsDataURL(file);
   };
 
   const handleUrl = () => {
-    if (url.trim()) {
-      onSave({ imageUrl: url.trim() });
-      onClose();
-    }
+    if (!url.trim()) return;
+    const isVideo = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url.trim());
+    onSave(isVideo ? { videoUrl: url.trim() } : { imageUrl: url.trim() });
+    onClose();
   };
 
+  const TABS = [
+    { key: "photo" as const, label: "Photo" },
+    { key: "video" as const, label: "Video" },
+    { key: "url"   as const, label: "URL" },
+  ];
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
-      style={{ background: "rgba(0,0,0,0.5)" }}
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md rounded-t-3xl bg-white p-5 pb-8 flex flex-col gap-4"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-end justify-center"
+      style={{ background: "rgba(0,0,0,0.5)" }} onClick={onClose}>
+      <div className="w-full max-w-md rounded-t-3xl bg-white p-5 pb-8 flex flex-col gap-4"
+        onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold" style={{ color: "#111827" }}>Add Image</p>
+          <p className="text-sm font-bold" style={{ color: "#111827" }}>Add Media</p>
           <button onClick={onClose}>
             <svg className="w-5 h-5" style={{ color: "#9ca3af" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -125,55 +126,60 @@ function AddImageModal({ onSave, onClose }: {
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="flex rounded-xl p-1 gap-1" style={{ background: "#f3f4f6" }}>
-          {(["upload", "url"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)}
+          {TABS.map((t) => (
+            <button key={t.key} onClick={() => setTab(t.key)}
               className="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all"
               style={{
-                background: tab === t ? "#fff" : "transparent",
-                color: tab === t ? "#111827" : "#9ca3af",
-                boxShadow: tab === t ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
-              }}>
-              {t === "upload" ? "Upload photo" : "Paste URL"}
-            </button>
+                background: tab === t.key ? "#fff" : "transparent",
+                color: tab === t.key ? "#111827" : "#9ca3af",
+                boxShadow: tab === t.key ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
+              }}>{t.label}</button>
           ))}
         </div>
 
-        {tab === "upload" ? (
-          <button
-            onClick={() => imgRef.current?.click()}
+        {tab === "photo" && (
+          <button onClick={() => imgRef.current?.click()}
             className="flex flex-col items-center gap-3 py-8 rounded-2xl border-2 border-dashed"
-            style={{ borderColor: "#e5e7eb" }}
-          >
+            style={{ borderColor: "#e5e7eb" }}>
             <svg className="w-8 h-8" style={{ color: "#d1d5db" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <p className="text-sm font-medium" style={{ color: "#6b7280" }}>Tap to choose a photo</p>
           </button>
-        ) : (
+        )}
+
+        {tab === "video" && (
+          <button onClick={() => vidRef.current?.click()}
+            className="flex flex-col items-center gap-3 py-8 rounded-2xl border-2 border-dashed"
+            style={{ borderColor: "#e5e7eb" }}>
+            <svg className="w-8 h-8" style={{ color: "#d1d5db" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.277A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+            </svg>
+            <p className="text-sm font-medium" style={{ color: "#6b7280" }}>Tap to choose a video</p>
+            <p className="text-xs" style={{ color: "#9ca3af" }}>MP4, MOV, WebM</p>
+          </button>
+        )}
+
+        {tab === "url" && (
           <div className="flex flex-col gap-2">
-            <input
-              className="w-full border rounded-xl px-3 py-2.5 text-sm outline-none"
+            <input className="w-full border rounded-xl px-3 py-2.5 text-sm outline-none"
               style={{ borderColor: "#e5e7eb", background: "#fafafa", color: "#111827" }}
-              placeholder="https://example.com/image.jpg"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              autoFocus
-            />
-            <button
-              onClick={handleUrl}
-              disabled={!url.trim()}
+              placeholder="https://example.com/clip.mp4 or image.jpg"
+              value={url} onChange={(e) => setUrl(e.target.value)} autoFocus />
+            <p className="text-xs" style={{ color: "#9ca3af" }}>Video URLs (.mp4, .webm, .mov) saved as video · others as image</p>
+            <button onClick={handleUrl} disabled={!url.trim()}
               className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
-              style={{ background: "linear-gradient(135deg, #f97316, #ea580c)", opacity: url.trim() ? 1 : 0.5 }}
-            >
+              style={{ background: "linear-gradient(135deg, #f97316, #ea580c)", opacity: url.trim() ? 1 : 0.5 }}>
               Save
             </button>
           </div>
         )}
 
         <input ref={imgRef} type="file" accept="image/*" className="hidden"
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageFile(f); }} />
+        <input ref={vidRef} type="file" accept="video/*" className="hidden"
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleVideoFile(f); }} />
       </div>
     </div>
   );
@@ -182,30 +188,35 @@ function AddImageModal({ onSave, onClose }: {
 function ExerciseCard({ ex, onDelete, onUpdateImage }: {
   ex: Exercise;
   onDelete: (id: string) => void;
-  onUpdateImage: (id: string, image: { imageBase64?: string; imageUrl?: string }) => void;
+  onUpdateImage: (id: string, media: MediaUpdate) => void;
 }) {
   const [lightbox, setLightbox] = useState(false);
-  const [addingImage, setAddingImage] = useState(false);
+  const [addingMedia, setAddingMedia] = useState(false);
   const phase = ex.phase ? PHASE_COLORS[ex.phase] : null;
   const setsReps = ex.sets && ex.reps ? `${ex.sets} sets × ${ex.reps} reps` : ex.duration ?? "";
   const imageSrc = ex.imageBase64 ?? ex.imageUrl;
-  const hasMedia = imageSrc || ex.videoUrl;
+  const videoSrc = ex.videoBase64 ?? ex.videoUrl;
+  const hasMedia = imageSrc || videoSrc;
 
   return (
     <>
-      {lightbox && imageSrc && (
-        <ImageLightbox
-          src={imageSrc}
+      {lightbox && hasMedia && (
+        <MediaLightbox
+          imageSrc={imageSrc}
+          videoSrc={videoSrc}
           alt={ex.name}
           onClose={() => setLightbox(false)}
-          onReplace={() => { setLightbox(false); setAddingImage(true); }}
-          onRemove={() => { setLightbox(false); onUpdateImage(ex.id, { imageBase64: undefined, imageUrl: undefined }); }}
+          onReplace={() => { setLightbox(false); setAddingMedia(true); }}
+          onRemove={() => {
+            setLightbox(false);
+            onUpdateImage(ex.id, { imageBase64: undefined, imageUrl: undefined, videoBase64: undefined, videoUrl: undefined });
+          }}
         />
       )}
-      {addingImage && (
-        <AddImageModal
-          onSave={(img) => { onUpdateImage(ex.id, img); setAddingImage(false); }}
-          onClose={() => setAddingImage(false)}
+      {addingMedia && (
+        <AddMediaModal
+          onSave={(media) => { onUpdateImage(ex.id, media); setAddingMedia(false); }}
+          onClose={() => setAddingMedia(false)}
         />
       )}
       <div className="rounded-2xl bg-white p-4 flex gap-3" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)" }}>
@@ -214,7 +225,7 @@ function ExerciseCard({ ex, onDelete, onUpdateImage }: {
           <div
             className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center"
             style={{ background: "#fff7ed", cursor: "pointer" }}
-            onClick={() => imageSrc ? setLightbox(true) : setAddingImage(true)}
+            onClick={() => hasMedia ? setLightbox(true) : setAddingMedia(true)}
           >
             {ex.videoUrl ? (
               <video src={ex.videoUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
@@ -448,17 +459,17 @@ export function FitDayApp() {
     setData((prev) => prev ? { ...prev, exercises: prev.exercises.filter((e) => e.id !== id) } : prev);
   };
 
-  const handleUpdateImage = async (id: string, image: { imageBase64?: string; imageUrl?: string }) => {
+  const handleUpdateImage = async (id: string, media: MediaUpdate) => {
     const exercise = data?.exercises.find((e) => e.id === id);
     if (!exercise) return;
     await fetch("/api/exercise", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...exercise, ...image }),
+      body: JSON.stringify({ ...exercise, ...media }),
     });
     setData((prev) => prev ? {
       ...prev,
-      exercises: prev.exercises.map((e) => e.id === id ? { ...e, ...image } : e),
+      exercises: prev.exercises.map((e) => e.id === id ? { ...e, ...media } : e),
     } : prev);
   };
 
