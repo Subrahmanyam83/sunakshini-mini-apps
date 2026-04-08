@@ -468,7 +468,7 @@ export function FitDayApp() {
   if (error) return <p className="text-center py-8 text-sm" style={{ color: "#ef4444" }}>{error}</p>;
 
   const exercises = data?.exercises ?? [];
-  const phases = ["Warm Up", "Release", "Activate"];
+  const phases = PHASES;
   const ungrouped = exercises.filter((e) => !e.phase);
   const grouped = phases.map((phase) => ({ phase, items: exercises.filter((e) => e.phase === phase) })).filter((g) => g.items.length > 0);
 
