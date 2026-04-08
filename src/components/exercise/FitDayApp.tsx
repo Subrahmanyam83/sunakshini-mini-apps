@@ -4,12 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { Exercise, ExerciseData, BodyPart } from "@/types/exercise";
 
 const BODY_PARTS: BodyPart[] = ["back", "core", "hips", "legs", "arms", "shoulders", "chest", "nerve", "full body"];
-const PHASES = ["Warm Up", "Release", "Activate"];
+const PHASES = ["Warm Up", "Release", "Activate", "Night"];
 
 const PHASE_COLORS: Record<string, { bg: string; text: string }> = {
   "Warm Up":  { bg: "#fef3c7", text: "#b45309" },
   "Release":  { bg: "#dbeafe", text: "#1d4ed8" },
   "Activate": { bg: "#dcfce7", text: "#15803d" },
+  "Night":    { bg: "#ede9fe", text: "#6d28d9" },
 };
 
 function BodyPartBadge({ part }: { part: string }) {
