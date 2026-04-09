@@ -18,5 +18,10 @@
     "id": "4c6140c0-40aa-4554-9490-8bb1b521f2c9",
     "name": "Corn",
     "bought": false
+  },
+  {
+    "id": "035d101a-6b3d-4673-bee5-b1b1d28e3294",
+    "name": "Butter",
+    "bought": false
   }
 ]
