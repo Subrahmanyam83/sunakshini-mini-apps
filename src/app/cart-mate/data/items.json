@@ -33,5 +33,10 @@
     "id": "30aacf7c-7877-4c08-b43d-b984fd836903",
     "name": "Carrots",
     "bought": false
+  },
+  {
+    "id": "919378af-8c61-4397-9ace-99a7b5ef815e",
+    "name": "Coconut milk",
+    "bought": false
   }
 ]
