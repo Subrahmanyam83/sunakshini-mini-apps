@@ -53,5 +53,10 @@
     "id": "9cab329f-2717-4193-8704-fa7933770feb",
     "name": "Ben and jerry",
     "bought": true
+  },
+  {
+    "id": "a2f9edce-225a-409e-84db-d310ba2420a5",
+    "name": "Cheese slices",
+    "bought": false
   }
 ]
