@@ -28,9 +28,9 @@
       "id": "2026-04-11T22:17:46.677Z",
       "date": "2026-04-09",
       "type": "beer",
-      "quantity": 6,
+      "quantity": 5,
       "unit": "300ml",
-      "totalMl": 1800
+      "totalMl": 1500
     }
   ]
 }
