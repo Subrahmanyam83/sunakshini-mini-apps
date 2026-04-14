@@ -257,6 +257,90 @@
           "caloriesBurned": 191
         }
       ]
+    },
+    {
+      "date": "2026-04-14",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "f820bcd4-3e6b-4331-b910-a0b549843a9a",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "2168938",
+              "name": "ORGANIC PORRIDGE OATS",
+              "portionGrams": 120,
+              "calories": 450,
+              "proteinG": 12,
+              "carbsG": 75,
+              "fatG": 7.5
+            }
+          ]
+        },
+        {
+          "id": "bb1ca04e-275c-4806-9356-1b52f1d5705e",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2709145",
+              "name": "Soup, noodle, NFS",
+              "portionGrams": 490,
+              "calories": 441,
+              "proteinG": 26.9,
+              "carbsG": 49.4,
+              "fatG": 14.7
+            }
+          ]
+        },
+        {
+          "id": "804a35d1-43a7-40cb-b2a4-3119956ae755",
+          "type": "snack",
+          "foods": [
+            {
+              "fdcId": "2709265",
+              "name": "Plum, raw",
+              "portionGrams": 1,
+              "calories": 0,
+              "proteinG": 0,
+              "carbsG": 0.1,
+              "fatG": 0
+            }
+          ]
+        },
+        {
+          "id": "6b5b99ae-e48b-40de-89a3-d6bfb3fbd27e",
+          "type": "dinner",
+          "foods": [
+            {
+              "fdcId": "1865046",
+              "name": "CHICKPEA",
+              "portionGrams": 240,
+              "calories": 874,
+              "proteinG": 45.6,
+              "carbsG": 146.4,
+              "fatG": 14.4
+            },
+            {
+              "fdcId": "2429932",
+              "name": "BASMATI RICE, BASMATI",
+              "portionGrams": 200,
+              "calories": 296,
+              "proteinG": 7,
+              "carbsG": 64.8,
+              "fatG": 0
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": [
+        {
+          "id": "6aa9ccbb-0d25-4433-88bb-e6578aafe14c",
+          "type": "walking",
+          "minutes": 90,
+          "caloriesBurned": 457
+        }
+      ]
     }
   ]
 }
