@@ -15,8 +15,6 @@ const DRINK_TYPES: { value: DrinkType; label: string; unit: DrinkUnit }[] = [
   { value: "other",  label: "Other",  unit: "peg"   },
 ];
 
-const BEER_ML_PRESETS = [300, 330, 500, 650];
-
 function getToday() {
   return new Date().toISOString().split("T")[0];
 }
@@ -25,8 +23,7 @@ export function EntryForm({ onAdded }: { onAdded: () => void }) {
   const [date, setDate]         = useState("");
   const [type, setType]         = useState<DrinkType>("beer");
   const [quantity, setQuantity] = useState("1");
-  const [beerMl, setBeerMl]     = useState<number>(330);
-  const [customMlInput, setCustomMlInput] = useState("");
+  const [beerMl, setBeerMl]     = useState("");
   const [loading, setLoading]   = useState(false);
   const [status, setStatus]     = useState<"idle" | "success" | "error">("idle");
 
@@ -34,13 +31,9 @@ export function EntryForm({ onAdded }: { onAdded: () => void }) {
 
   const selected  = DRINK_TYPES.find((d) => d.value === type)!;
   const isBeer    = type === "beer";
-  const unitSize  = isBeer ? beerMl : (selected.unit === "300ml" ? 300 : 30);
+  const beerMlNum = parseInt(beerMl, 10);
+  const unitSize  = isBeer ? (beerMlNum || 0) : (selected.unit === "300ml" ? 300 : 30);
   const totalMl   = Math.round(parseFloat(quantity || "0") * unitSize);
-
-  function selectBeerMl(ml: number) {
-    setBeerMl(ml);
-    setCustomMlInput("");
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,7 +44,7 @@ export function EntryForm({ onAdded }: { onAdded: () => void }) {
     setStatus("idle");
     try {
       const body: Record<string, unknown> = { date, type, quantity: qty, unit: selected.unit };
-      if (isBeer) body.customMl = beerMl;
+      if (isBeer && beerMlNum > 0) body.customMl = beerMlNum;
       const res = await fetch("/api/alcohol", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,42 +102,17 @@ export function EntryForm({ onAdded }: { onAdded: () => void }) {
             </div>
           </div>
 
-          {/* Beer ml picker */}
+          {/* Beer ml field */}
           {isBeer && (
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-400">Size (ml per serving)</label>
-              <div className="flex gap-1.5 flex-wrap">
-                {BEER_ML_PRESETS.map((ml) => (
-                  <button
-                    key={ml} type="button"
-                    onClick={() => selectBeerMl(ml)}
-                    className="px-3 py-1 rounded-full text-xs font-semibold border transition-all"
-                    style={{
-                      background: beerMl === ml && !customMlInput ? "#4f46e5" : "#f1f5f9",
-                      color:      beerMl === ml && !customMlInput ? "#fff"    : "#64748b",
-                      borderColor: beerMl === ml && !customMlInput ? "#4f46e5" : "#e2e8f0",
-                    }}
-                  >
-                    {ml}
-                  </button>
-                ))}
-                <input
-                  type="number" min="1" placeholder="custom"
-                  value={customMlInput}
-                  onChange={(e) => {
-                    setCustomMlInput(e.target.value);
-                    const v = parseInt(e.target.value, 10);
-                    if (!isNaN(v) && v > 0) setBeerMl(v);
-                  }}
-                  className="w-20 rounded-full border px-2.5 py-1 text-xs outline-none focus:border-indigo-400"
-                  style={{
-                    borderColor: customMlInput ? "#4f46e5" : "#e2e8f0",
-                    background: customMlInput ? "#eef2ff" : "#f1f5f9",
-                    color: "#374151",
-                    fontSize: "16px",
-                  }}
-                />
-              </div>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-400">ml per serving</label>
+              <input
+                type="number" min="1" placeholder="e.g. 500"
+                value={beerMl}
+                onChange={(e) => setBeerMl(e.target.value)}
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400 focus:bg-white transition-all"
+                style={{ fontSize: "16px" }}
+              />
             </div>
           )}
         </div>
