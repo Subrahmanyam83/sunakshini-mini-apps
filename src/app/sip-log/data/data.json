@@ -70,7 +70,8 @@
       "type": "beer",
       "quantity": 3,
       "unit": "300ml",
-      "totalMl": 900
+      "customMl": 1320,
+      "totalMl": 3960
     }
   ]
 }
