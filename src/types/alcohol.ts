@@ -8,6 +8,7 @@ export interface AlcoholEntry {
   type: DrinkType;
   quantity: number;
   unit: DrinkUnit;
+  customMl?: number;  // per-serving ml override (beer only)
   totalMl: number;    // pre-computed total volume in ml
 }
 

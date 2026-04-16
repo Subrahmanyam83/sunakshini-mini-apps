@@ -48,7 +48,7 @@ export function AlcoholTracker() {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editFields, setEditFields] = useState<{ date: string; type: DrinkType; quantity: string }>({ date: "", type: "beer", quantity: "1" });
+  const [editFields, setEditFields] = useState<{ date: string; type: DrinkType; quantity: string; customMl: string }>({ date: "", type: "beer", quantity: "1", customMl: "330" });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -80,17 +80,15 @@ export function AlcoholTracker() {
 
   function startEdit(e: AlcoholEntry) {
     setEditingId(e.id);
-    setEditFields({ date: e.date, type: e.type, quantity: String(e.quantity) });
+    setEditFields({ date: e.date, type: e.type, quantity: String(e.quantity), customMl: String(e.customMl ?? (e.type === "beer" ? 330 : "")) });
   }
 
   async function saveEdit(e: AlcoholEntry) {
     setSaving(true);
     const drinkType = DRINK_TYPES.find((d) => d.value === editFields.type)!;
-    await fetch("/api/alcohol", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: e.id, date: editFields.date, type: editFields.type, quantity: parseFloat(editFields.quantity), unit: drinkType.unit }),
-    });
+    const body: Record<string, unknown> = { id: e.id, date: editFields.date, type: editFields.type, quantity: parseFloat(editFields.quantity), unit: drinkType.unit };
+    if (editFields.type === "beer" && editFields.customMl) body.customMl = parseInt(editFields.customMl, 10);
+    await fetch("/api/alcohol", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     setSaving(false);
     setEditingId(null);
     fetchData();
@@ -206,12 +204,35 @@ export function AlcoholTracker() {
                               </div>
                               <select
                                 value={editFields.type}
-                                onChange={(ev) => setEditFields((f) => ({ ...f, type: ev.target.value as DrinkType }))}
+                                onChange={(ev) => setEditFields((f) => ({ ...f, type: ev.target.value as DrinkType, customMl: ev.target.value === "beer" ? (editFields.customMl || "330") : "" }))}
                                 className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white outline-none focus:border-indigo-400"
                                 style={{ fontSize: "16px" }}
                               >
                                 {DRINK_TYPES.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
                               </select>
+                              {editFields.type === "beer" && (
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-[10px] font-medium text-gray-400 mr-0.5">ml/serving:</span>
+                                  {[300, 330, 500, 650].map((ml) => (
+                                    <button key={ml} type="button"
+                                      onClick={() => setEditFields((f) => ({ ...f, customMl: String(ml) }))}
+                                      className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all"
+                                      style={{
+                                        background: editFields.customMl === String(ml) ? "#4f46e5" : "#f1f5f9",
+                                        color: editFields.customMl === String(ml) ? "#fff" : "#64748b",
+                                        borderColor: editFields.customMl === String(ml) ? "#4f46e5" : "#e2e8f0",
+                                      }}
+                                    >{ml}</button>
+                                  ))}
+                                  <input
+                                    type="number" min="1" placeholder="custom"
+                                    value={[300,330,500,650].includes(Number(editFields.customMl)) ? "" : editFields.customMl}
+                                    onChange={(ev) => setEditFields((f) => ({ ...f, customMl: ev.target.value }))}
+                                    className="w-16 rounded-full border px-2 py-0.5 text-[11px] outline-none focus:border-indigo-400"
+                                    style={{ borderColor: "#e2e8f0", background: "#f1f5f9", fontSize: "16px" }}
+                                  />
+                                </div>
+                              )}
                               <div className="flex gap-2">
                                 <button onClick={() => saveEdit(e)} disabled={saving}
                                   className="flex-1 text-xs bg-indigo-600 text-white rounded-lg py-1.5 font-medium disabled:opacity-50">Save</button>

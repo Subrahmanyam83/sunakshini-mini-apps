@@ -92,8 +92,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const totalMl = quantity * UNIT_ML[unit];
-    const newEntry: AlcoholEntry = { id: new Date().toISOString(), date, type, quantity: Number(quantity), unit, totalMl };
+    const customMl: number | undefined = body.customMl ? Number(body.customMl) : undefined;
+    const unitMl = customMl ?? UNIT_ML[unit];
+    const totalMl = quantity * unitMl;
+    const newEntry: AlcoholEntry = { id: new Date().toISOString(), date, type, quantity: Number(quantity), unit, ...(customMl ? { customMl } : {}), totalMl };
 
     const { email, name } = await getUserInfo();
     const path = getDataPath(email, name);
@@ -125,7 +127,9 @@ export async function PUT(req: NextRequest) {
     const idx = data.entries.findIndex((e) => e.id === id);
     if (idx === -1) return NextResponse.json({ error: "Entry not found" }, { status: 404 });
 
-    data.entries[idx] = { id, date, type, quantity: Number(quantity), unit, totalMl: Number(quantity) * UNIT_ML[unit] };
+    const editCustomMl: number | undefined = body.customMl ? Number(body.customMl) : undefined;
+    const editUnitMl = editCustomMl ?? UNIT_ML[unit];
+    data.entries[idx] = { id, date, type, quantity: Number(quantity), unit, ...(editCustomMl ? { customMl: editCustomMl } : {}), totalMl: Number(quantity) * editUnitMl };
     data.entries.sort((a, b) => a.date.localeCompare(b.date));
     await updateFile(path, JSON.stringify(data, null, 2) + "\n", sha, `Update ${type} entry for ${date}`);
     return NextResponse.json({ success: true });
