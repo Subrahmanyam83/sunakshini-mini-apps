@@ -407,6 +407,30 @@
               "fatG": 0
             }
           ]
+        },
+        {
+          "id": "b65bd2d3-c5ef-4382-bb16-170836b98fe9",
+          "type": "dinner",
+          "foods": [
+            {
+              "fdcId": "1858805",
+              "name": "QUINOA",
+              "portionGrams": 473,
+              "calories": 506,
+              "proteinG": 13.5,
+              "carbsG": 94.6,
+              "fatG": 8.5
+            },
+            {
+              "fdcId": "2036730",
+              "name": "PIZZA",
+              "portionGrams": 250,
+              "calories": 550,
+              "proteinG": 17.1,
+              "carbsG": 58.8,
+              "fatG": 22.7
+            }
+          ]
         }
       ],
       "waterMl": 0,
