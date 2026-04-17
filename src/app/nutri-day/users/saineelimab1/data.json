@@ -364,6 +364,53 @@
       ],
       "waterMl": 0,
       "exercises": []
+    },
+    {
+      "date": "2026-04-16",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "49254b2d-ab88-43a3-a860-9455a0b164c4",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "2020713",
+              "name": "OATS",
+              "portionGrams": 70,
+              "calories": 263,
+              "proteinG": 8.8,
+              "carbsG": 47.3,
+              "fatG": 4.4
+            }
+          ]
+        },
+        {
+          "id": "38509045-6593-49c5-a0ad-d959e0f13cdb",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2709798",
+              "name": "Peppers, hot, raw",
+              "portionGrams": 50,
+              "calories": 17,
+              "proteinG": 0.7,
+              "carbsG": 3.8,
+              "fatG": 0.2
+            },
+            {
+              "fdcId": "2281663",
+              "name": "CHERRY TOMATOES",
+              "portionGrams": 50,
+              "calories": 11,
+              "proteinG": 0,
+              "carbsG": 2.3,
+              "fatG": 0
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
