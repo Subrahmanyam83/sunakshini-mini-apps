@@ -341,6 +341,29 @@
           "caloriesBurned": 457
         }
       ]
+    },
+    {
+      "date": "2026-04-17",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "c91ed3d7-492b-4f07-a061-5cfd9eb6ba00",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "507441",
+              "name": "SANDWICH",
+              "portionGrams": 110,
+              "calories": 284,
+              "proteinG": 7.8,
+              "carbsG": 28.4,
+              "fatG": 12.8
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
