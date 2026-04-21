@@ -684,6 +684,83 @@
       ],
       "waterMl": 0,
       "exercises": []
+    },
+    {
+      "date": "2026-04-19",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "2b9a21a6-f531-45f8-9e50-240b72bca409",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "173307",
+              "name": "McDONALD'S, Egg McMUFFIN",
+              "portionGrams": 100,
+              "calories": 228,
+              "proteinG": 13.6,
+              "carbsG": 21.7,
+              "fatG": 9.7
+            },
+            {
+              "fdcId": "173298",
+              "name": "McDONALD'S, Hash Brown",
+              "portionGrams": 100,
+              "calories": 271,
+              "proteinG": 2.5,
+              "carbsG": 28.6,
+              "fatG": 16.3
+            }
+          ]
+        },
+        {
+          "id": "51da0f69-5165-47d6-aadc-03f8db74ecb4",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2036730",
+              "name": "PIZZA",
+              "portionGrams": 600,
+              "calories": 1320,
+              "proteinG": 40.9,
+              "carbsG": 141,
+              "fatG": 54.5
+            }
+          ]
+        },
+        {
+          "id": "1a5c8329-e114-4e5f-b8b5-91f27b767dc2",
+          "type": "dinner",
+          "foods": [
+            {
+              "fdcId": "2077766",
+              "name": "RICE",
+              "portionGrams": 100,
+              "calories": 356,
+              "proteinG": 6.7,
+              "carbsG": 77.8,
+              "fatG": 0
+            }
+          ]
+        },
+        {
+          "id": "6d77558e-0eb1-43db-960c-2dff70334271",
+          "type": "snack",
+          "foods": [
+            {
+              "fdcId": "2128017",
+              "name": "GARLIC BREAD",
+              "portionGrams": 100,
+              "calories": 351,
+              "proteinG": 8.8,
+              "carbsG": 45.6,
+              "fatG": 14
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
