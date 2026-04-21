@@ -616,6 +616,74 @@
           "caloriesBurned": 132
         }
       ]
+    },
+    {
+      "date": "2026-04-18",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "e32f05c7-1f8e-41e2-91bb-1240514de54b",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "507441",
+              "name": "SANDWICH",
+              "portionGrams": 75,
+              "calories": 194,
+              "proteinG": 5.3,
+              "carbsG": 19.4,
+              "fatG": 8.7
+            }
+          ]
+        },
+        {
+          "id": "708b4ccb-e150-44b7-a4d3-d69574222fe5",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2708985",
+              "name": "Biryani with vegetables",
+              "portionGrams": 1150,
+              "calories": 1254,
+              "proteinG": 22.2,
+              "carbsG": 206,
+              "fatG": 36.8
+            }
+          ]
+        },
+        {
+          "id": "f61cdcce-baf2-4709-ac66-db08ec5c2ac1",
+          "type": "dinner",
+          "foods": [
+            {
+              "fdcId": "2017319",
+              "name": "NOODLES",
+              "portionGrams": 145,
+              "calories": 537,
+              "proteinG": 16.1,
+              "carbsG": 112.8,
+              "fatG": 2.7
+            }
+          ]
+        },
+        {
+          "id": "e553db7d-0bd5-4465-a2f0-2d79f170ab07",
+          "type": "snack",
+          "foods": [
+            {
+              "fdcId": "391301",
+              "name": "MAGNUM, ICE CREAM BAR, DOUBLE CHOCOLATE VANILLA",
+              "portionGrams": 80,
+              "calories": 283,
+              "proteinG": 2,
+              "carbsG": 29.4,
+              "fatG": 17.2
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
