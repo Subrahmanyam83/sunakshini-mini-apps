@@ -815,6 +815,29 @@
       ],
       "waterMl": 0,
       "exercises": []
+    },
+    {
+      "date": "2026-04-25",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "2c90a7bd-a66d-4e47-81ad-e8be5e59dd0c",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2077766",
+              "name": "RICE",
+              "portionGrams": 578,
+              "calories": 2058,
+              "proteinG": 38.6,
+              "carbsG": 449.7,
+              "fatG": 0
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
