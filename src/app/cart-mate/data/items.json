@@ -158,5 +158,10 @@
     "id": "f339c56c-af2a-41e1-b35e-08df7f44b333",
     "name": "Test",
     "bought": true
+  },
+  {
+    "id": "b7249ff7-00bd-4a31-a1c3-3e3faf766091",
+    "name": "Ginger",
+    "bought": false
   }
 ]
