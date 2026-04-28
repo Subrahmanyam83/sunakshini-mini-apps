@@ -104,6 +104,15 @@
       "unit": "300ml",
       "customMl": 440,
       "totalMl": 1760
+    },
+    {
+      "id": "2026-04-28T18:23:34.458Z",
+      "date": "2026-04-28",
+      "type": "beer",
+      "quantity": 4,
+      "unit": "300ml",
+      "customMl": 440,
+      "totalMl": 1760
     }
   ]
 }
