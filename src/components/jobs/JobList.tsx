@@ -77,13 +77,6 @@ export function JobList({ profile, appliedJobs, onApply }: Props) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [newCount, setNewCount] = useState(0);
 
-  // Cover letter state
-  const [clJobId, setClJobId] = useState<string | null>(null);
-  const [clText, setClText] = useState("");
-  const [clLoading, setClLoading] = useState(false);
-  const [clError, setClError] = useState("");
-  const [clCopied, setClCopied] = useState(false);
-
   useEffect(() => {
     if (activeRole) fetchJobs(activeRole, activeLocation);
   }, [activeRole, activeLocation]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -125,37 +118,7 @@ export function JobList({ profile, appliedJobs, onApply }: Props) {
     }
   }
 
-  async function generateCoverLetter(job: ScoredJob) {
-    setClJobId(job.id);
-    setClText("");
-    setClError("");
-    setClCopied(false);
-    setClLoading(true);
-    try {
-      const res = await fetch("/api/jobs/cover-letter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cvText: profile.cvText,
-          jobTitle: job.title,
-          company: job.company,
-          jobDescription: job.description,
-          candidateName: profile.fullName,
-          candidateRole: profile.currentRole,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error);
-      setClText(json.letter);
-    } catch (err) {
-      setClError(err instanceof Error ? err.message : "Failed to generate");
-    } finally {
-      setClLoading(false);
-    }
-  }
-
   const appliedIds = new Set(appliedJobs.map((a) => a.jobId));
-  const clJob = jobs.find((j) => j.id === clJobId);
 
   return (
     <div className="space-y-4">
@@ -295,22 +258,12 @@ export function JobList({ profile, appliedJobs, onApply }: Props) {
                   </p>
                 )}
 
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setExpanded(isExpanded ? null : job.id)}
-                    className="text-xs text-indigo-400 active:opacity-70"
-                  >
-                    {isExpanded ? "Show less" : "Show description"}
-                  </button>
-                  {isExpanded && (
-                    <button
-                      onClick={() => generateCoverLetter(job)}
-                      className="text-xs text-purple-500 font-medium active:opacity-70"
-                    >
-                      ✉️ Cover letter
-                    </button>
-                  )}
-                </div>
+                <button
+                  onClick={() => setExpanded(isExpanded ? null : job.id)}
+                  className="text-xs text-indigo-400 active:opacity-70"
+                >
+                  {isExpanded ? "Show less" : "Show description"}
+                </button>
               </div>
 
               <div className="flex border-t border-gray-50">
@@ -367,75 +320,6 @@ export function JobList({ profile, appliedJobs, onApply }: Props) {
               </a>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* Cover letter bottom sheet */}
-      {clJobId && (
-        <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-end"
-          onClick={() => {
-            setClJobId(null);
-            setClText("");
-          }}
-        >
-          <div
-            className="bg-white rounded-t-3xl w-full max-h-[82vh] overflow-y-auto p-5 space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Cover Letter</p>
-                {clJob && (
-                  <p className="text-xs text-gray-400">
-                    {clJob.title} · {clJob.company}
-                  </p>
-                )}
-              </div>
-              <button
-                onClick={() => {
-                  setClJobId(null);
-                  setClText("");
-                }}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 active:bg-gray-200"
-              >
-                ✕
-              </button>
-            </div>
-
-            {clLoading && (
-              <div className="flex items-center justify-center py-10 gap-3">
-                <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-purple-500 animate-spin" />
-                <span className="text-xs text-gray-400">Writing your cover letter…</span>
-              </div>
-            )}
-
-            {clError && (
-              <div className="bg-red-50 rounded-xl p-3 text-xs text-red-600">
-                {clError.includes("ANTHROPIC_API_KEY")
-                  ? "Add ANTHROPIC_API_KEY to your .env file to enable AI cover letters."
-                  : clError}
-              </div>
-            )}
-
-            {clText && (
-              <>
-                <div className="bg-gray-50 rounded-2xl p-4 text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {clText}
-                </div>
-                <button
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(clText);
-                    setClCopied(true);
-                    setTimeout(() => setClCopied(false), 2000);
-                  }}
-                  className="w-full h-11 rounded-2xl bg-indigo-600 text-white text-sm font-medium active:bg-indigo-700 transition-colors"
-                >
-                  {clCopied ? "✓ Copied!" : "Copy to clipboard"}
-                </button>
-              </>
-            )}
-          </div>
         </div>
       )}
     </div>
