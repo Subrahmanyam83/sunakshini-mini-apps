@@ -68,45 +68,57 @@ function seenKey(role: string, location: string) {
   return `jobpulse_seen_${role}_${location}`.replace(/\s+/g, "_");
 }
 
+// Extract the core city name — "Greater London, England, UK" → "london"
+function cityKeyword(location: string): string {
+  const first = location.split(",")[0].trim();
+  return first.replace(/^(greater|north|south|east|west)\s+/i, "").toLowerCase();
+}
+
 export function JobList({ profile, appliedJobs, onApply }: Props) {
   const [jobs, setJobs] = useState<ScoredJob[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [activeRole, setActiveRole] = useState(profile.preferredRoles[0] ?? "");
   const [activeLocation, setActiveLocation] = useState(profile.preferredLocations[0] ?? "");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [newCount, setNewCount] = useState(0);
 
   useEffect(() => {
-    if (activeRole) fetchJobs(activeRole, activeLocation);
-  }, [activeRole, activeLocation]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchAllRoles(activeLocation);
+  }, [activeLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function fetchJobs(role: string, location: string) {
+  async function fetchAllRoles(location: string) {
     setLoading(true);
     setError("");
     setJobs([]);
     setNewCount(0);
     try {
-      const res = await fetch(
-        `/api/jobs/search?q=${encodeURIComponent(role)}&location=${encodeURIComponent(location)}`
-      );
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error);
+      // Combine all roles into one query to avoid multiple API calls
+      const combinedQuery = profile.preferredRoles.slice(0, 3).join(" OR ");
+      const json = await fetch(
+        `/api/jobs/search?q=${encodeURIComponent(combinedQuery)}&location=${encodeURIComponent(location)}`
+      )
+        .then((r) => r.json())
+        .catch(() => ({ jobs: [] }));
 
-      const rawJobs: Job[] = json.jobs ?? [];
-      const scored: ScoredJob[] = rawJobs
+      const seen = new Map<string, Job>();
+      for (const job of (json.jobs ?? []) as Job[]) {
+        if (!seen.has(job.id)) seen.set(job.id, job);
+      }
+
+      const locationFilter = cityKeyword(location);
+      const scored: ScoredJob[] = Array.from(seen.values())
+        .filter((j) => !locationFilter || j.location.toLowerCase().includes(locationFilter))
         .map((j) => ({ ...j, ...scoreJob(j, profile) }))
         .sort((a, b) => b.matchScore - a.matchScore);
 
       setJobs(scored);
 
       // New-job detection via localStorage
-      const key = seenKey(role, location);
-      const seen = new Set<string>(JSON.parse(localStorage.getItem(key) ?? "[]"));
-      const fresh = scored.filter((j) => !seen.has(j.id)).length;
+      const key = seenKey("all", location);
+      const seenIds = new Set<string>(JSON.parse(localStorage.getItem(key) ?? "[]"));
+      const fresh = scored.filter((j) => !seenIds.has(j.id)).length;
       setNewCount(fresh);
 
-      // After 4 s mark all as seen
       setTimeout(() => {
         localStorage.setItem(key, JSON.stringify(scored.map((j) => j.id)));
         setNewCount(0);
@@ -122,24 +134,11 @@ export function JobList({ profile, appliedJobs, onApply }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* Role selector */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {profile.preferredRoles.map((role) => (
-          <button
-            key={role}
-            onClick={() => setActiveRole(role)}
-            className="flex-shrink-0 h-8 px-3 rounded-full text-xs font-medium transition-all"
-            style={{
-              background: activeRole === role ? "#4f46e5" : "#ede9fe",
-              color: activeRole === role ? "white" : "#4f46e5",
-            }}
-          >
-            {role}
-          </button>
-        ))}
+      {/* Refresh */}
+      <div className="flex justify-end">
         <button
-          onClick={() => fetchJobs(activeRole, activeLocation)}
-          className="flex-shrink-0 h-8 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-500 active:bg-gray-200"
+          onClick={() => fetchAllRoles(activeLocation)}
+          className="h-8 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-500 active:bg-gray-200"
         >
           🔄 Refresh
         </button>
