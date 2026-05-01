@@ -52,7 +52,7 @@
   {
     "id": "b7d7aad5-e11a-40e0-8afa-c76de67d952e",
     "name": "Cherry tomatos",
-    "bought": false
+    "bought": true
   },
   {
     "id": "0583e516-ff48-4e6d-9a3c-751e9f7725dd",
@@ -67,7 +67,7 @@
   {
     "id": "a017e3b3-4e59-4d68-bb0a-5558e7ef5643",
     "name": "Banana",
-    "bought": true
+    "bought": false
   },
   {
     "id": "5392cf56-13b2-48d4-b6ae-815236b1f712",
@@ -92,11 +92,6 @@
   {
     "id": "cf3259af-d4d9-4d13-8d47-ef1357db05f8",
     "name": "Puff pastry shee",
-    "bought": false
-  },
-  {
-    "id": "b5c1a06e-41d4-4f96-b326-092a4e28b886",
-    "name": "Bananas",
     "bought": false
   }
 ]
