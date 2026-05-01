@@ -62,5 +62,11 @@ export function useGroceryItems() {
     updateItems((prev) => prev.filter((i) => !i.bought));
   }, [updateItems]);
 
-  return { items, loading, error, addItem, toggleItem, clearBought };
+  const renameItem = useCallback((id: string, name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    updateItems((prev) => prev.map((i) => i.id === id ? { ...i, name: trimmed } : i));
+  }, [updateItems]);
+
+  return { items, loading, error, addItem, toggleItem, clearBought, renameItem };
 }

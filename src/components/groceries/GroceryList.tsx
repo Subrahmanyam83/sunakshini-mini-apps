@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useGroceryItems } from "@/lib/use-grocery-items";
 
 export function GroceryList() {
-  const { items, loading, error, addItem, toggleItem, clearBought } = useGroceryItems();
+  const { items, loading, error, addItem, toggleItem, clearBought, renameItem } = useGroceryItems();
   const [input, setInput] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleAdd() {
@@ -15,6 +17,20 @@ export function GroceryList() {
     addItem(name);
     setInput("");
     inputRef.current?.focus();
+  }
+
+  function startEdit(id: string, name: string) {
+    setEditingId(id);
+    setEditValue(name);
+  }
+
+  function saveEdit() {
+    if (editingId) renameItem(editingId, editValue);
+    setEditingId(null);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
   }
 
   const pending = items.filter((i) => !i.bought);
@@ -73,7 +89,47 @@ export function GroceryList() {
                   onClick={() => toggleItem(item.id)}
                   className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 hover:border-emerald-500 transition-colors"
                 />
-                <span className="text-sm text-gray-700">{item.name}</span>
+                {editingId === item.id ? (
+                  <div className="flex-1 flex items-center gap-2">
+                    <input
+                      autoFocus
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") saveEdit();
+                        if (e.key === "Escape") cancelEdit();
+                      }}
+                      className="flex-1 text-sm bg-gray-50 border border-emerald-300 rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-emerald-100"
+                      style={{ fontSize: "16px" }}
+                    />
+                    {/* Save */}
+                    <button onClick={saveEdit} className="text-emerald-500 active:opacity-70">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </button>
+                    {/* Cancel */}
+                    <button onClick={cancelEdit} className="text-gray-400 active:opacity-70">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="flex-1 text-sm text-gray-700">{item.name}</span>
+                    {/* Edit */}
+                    <button
+                      onClick={() => startEdit(item.id, item.name)}
+                      className="text-gray-300 hover:text-gray-500 active:opacity-70 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-1.414a2 2 0 01.586-1.414z" />
+                      </svg>
+                    </button>
+                  </>
+                )}
               </li>
             ))}
           </ul>
@@ -105,7 +161,7 @@ export function GroceryList() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </button>
-                <span className="text-sm text-gray-400 line-through">{item.name}</span>
+                <span className="flex-1 text-sm text-gray-400 line-through">{item.name}</span>
               </li>
             ))}
           </ul>
