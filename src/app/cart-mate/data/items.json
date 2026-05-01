@@ -48,5 +48,10 @@
     "id": "88795f01-9b66-4aab-91e0-5f652d4e42cb",
     "name": "Aloo",
     "bought": false
+  },
+  {
+    "id": "b7d7aad5-e11a-40e0-8afa-c76de67d952e",
+    "name": "Cherry tomatos",
+    "bought": false
   }
 ]
