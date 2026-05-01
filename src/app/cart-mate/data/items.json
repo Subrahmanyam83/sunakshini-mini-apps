@@ -68,5 +68,10 @@
     "id": "a017e3b3-4e59-4d68-bb0a-5558e7ef5643",
     "name": "Banana",
     "bought": false
+  },
+  {
+    "id": "5392cf56-13b2-48d4-b6ae-815236b1f712",
+    "name": "Milk",
+    "bought": false
   }
 ]
