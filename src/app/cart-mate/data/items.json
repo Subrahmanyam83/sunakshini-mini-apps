@@ -53,5 +53,10 @@
     "id": "b7d7aad5-e11a-40e0-8afa-c76de67d952e",
     "name": "Cherry tomatos",
     "bought": false
+  },
+  {
+    "id": "0583e516-ff48-4e6d-9a3c-751e9f7725dd",
+    "name": "Avacado",
+    "bought": false
   }
 ]
