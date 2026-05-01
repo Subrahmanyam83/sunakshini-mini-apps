@@ -38,5 +38,10 @@
     "id": "5817d4c6-44bc-4b72-aacc-ec0705c137f3",
     "name": "Akrut",
     "bought": false
+  },
+  {
+    "id": "b3e3b177-cb4a-47ad-846a-fa8016f2bb8d",
+    "name": "Carrots",
+    "bought": false
   }
 ]
