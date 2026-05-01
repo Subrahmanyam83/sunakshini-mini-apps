@@ -93,5 +93,10 @@
     "id": "cf3259af-d4d9-4d13-8d47-ef1357db05f8",
     "name": "Puff pastry shee",
     "bought": false
+  },
+  {
+    "id": "b5c1a06e-41d4-4f96-b326-092a4e28b886",
+    "name": "Banana",
+    "bought": false
   }
 ]
