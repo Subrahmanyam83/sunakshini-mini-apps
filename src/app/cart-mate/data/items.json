@@ -43,5 +43,10 @@
     "id": "b3e3b177-cb4a-47ad-846a-fa8016f2bb8d",
     "name": "Carrots",
     "bought": false
+  },
+  {
+    "id": "88795f01-9b66-4aab-91e0-5f652d4e42cb",
+    "name": "Aloo",
+    "bought": false
   }
 ]
