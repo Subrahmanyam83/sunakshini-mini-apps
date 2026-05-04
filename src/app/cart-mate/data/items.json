@@ -22,7 +22,7 @@
   {
     "id": "e0d49b64-b020-4659-99e6-206f9c68d67e",
     "name": "Rubber bands",
-    "bought": false
+    "bought": true
   },
   {
     "id": "6a49f9ed-676c-475c-9959-e075eb85eae2",
@@ -93,5 +93,10 @@
     "id": "cf3259af-d4d9-4d13-8d47-ef1357db05f8",
     "name": "Puff pastry shee",
     "bought": true
+  },
+  {
+    "id": "55ac32c8-cb7a-4cca-af64-7bb0ccf874c0",
+    "name": "Appadalu",
+    "bought": false
   }
 ]
