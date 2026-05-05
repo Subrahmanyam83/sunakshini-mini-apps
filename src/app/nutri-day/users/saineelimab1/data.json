@@ -975,6 +975,59 @@
       ],
       "waterMl": 0,
       "exercises": []
+    },
+    {
+      "date": "2026-05-03",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "2f06c23f-1dcb-49af-898d-529bb019f2f6",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "2724869",
+              "name": "MAGGI 2-MINUTE NOODLES Mas 280g",
+              "portionGrams": 80,
+              "calories": 354,
+              "proteinG": 6.9,
+              "carbsG": 49.1,
+              "fatG": 14.9
+            }
+          ]
+        },
+        {
+          "id": "03fa4019-6edc-4909-badc-f7fdd50b08ad",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2637940",
+              "name": "SALAD",
+              "portionGrams": 250,
+              "calories": 378,
+              "proteinG": 6.7,
+              "carbsG": 67.5,
+              "fatG": 11.5
+            }
+          ]
+        },
+        {
+          "id": "8c9128d0-28b1-4c90-8dd9-570e3bb4cd13",
+          "type": "dinner",
+          "foods": [
+            {
+              "fdcId": "2708985",
+              "name": "Biryani with vegetables",
+              "portionGrams": 1500,
+              "calories": 1635,
+              "proteinG": 29,
+              "carbsG": 268.6,
+              "fatG": 48
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
