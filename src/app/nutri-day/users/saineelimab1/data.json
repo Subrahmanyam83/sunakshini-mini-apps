@@ -907,6 +907,74 @@
       ],
       "waterMl": 0,
       "exercises": []
+    },
+    {
+      "date": "2026-05-04",
+      "memberId": "0d829d60-856c-4cb8-8020-7f15817b48df",
+      "meals": [
+        {
+          "id": "8bbda222-4c80-4663-a895-1981006cac15",
+          "type": "breakfast",
+          "foods": [
+            {
+              "fdcId": "2709129",
+              "name": "Dosa, with filling",
+              "portionGrams": 350,
+              "calories": 644,
+              "proteinG": 19.1,
+              "carbsG": 107.8,
+              "fatG": 14.9
+            }
+          ]
+        },
+        {
+          "id": "400534e1-fe4b-4238-9986-4e899f088556",
+          "type": "lunch",
+          "foods": [
+            {
+              "fdcId": "2077766",
+              "name": "RICE",
+              "portionGrams": 100,
+              "calories": 356,
+              "proteinG": 6.7,
+              "carbsG": 77.8,
+              "fatG": 0
+            }
+          ]
+        },
+        {
+          "id": "2c2c0ac3-a084-4f7c-b763-c0bc0c1b237d",
+          "type": "dinner",
+          "foods": [
+            {
+              "fdcId": "2265565",
+              "name": "THICK POHA",
+              "portionGrams": 120,
+              "calories": 400,
+              "proteinG": 8,
+              "carbsG": 92,
+              "fatG": 0
+            }
+          ]
+        },
+        {
+          "id": "0b540409-9638-4485-a793-387b660b0ed7",
+          "type": "snack",
+          "foods": [
+            {
+              "fdcId": "2478393",
+              "name": "SHREDDED KUNAFA",
+              "portionGrams": 100,
+              "calories": 290,
+              "proteinG": 6.2,
+              "carbsG": 44.2,
+              "fatG": 9.7
+            }
+          ]
+        }
+      ],
+      "waterMl": 0,
+      "exercises": []
     }
   ]
 }
