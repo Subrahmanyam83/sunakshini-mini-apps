@@ -1,13 +1,34 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { AnimatedTitle } from "@/components/AnimatedTitle";
 import { HomeCards } from "@/components/HomeCards";
 
 export default async function Home() {
   const user = await currentUser();
-  if (!user) redirect("/login");
   const firstName = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0];
+
+  if (!user) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: "#f0f2f5" }}>
+        <div className="flex flex-col items-center gap-6 text-center max-w-xs">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Sunakshini Mini Apps" className="w-20 h-20 rounded-2xl shadow-md" />
+          <div className="space-y-1">
+            <p className="text-lg font-bold text-gray-800">Sunakshini Mini Apps</p>
+            <p className="text-sm text-gray-400">Everyday life, made simple.</p>
+          </div>
+          <Link
+            href="/login"
+            className="h-11 px-8 rounded-2xl text-sm font-semibold text-white flex items-center justify-center"
+            style={{ background: "#16a34a" }}
+          >
+            Sign in
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex flex-col" style={{ background: "#f0f2f5" }}>
