@@ -1,10 +1,12 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 import { AnimatedTitle } from "@/components/AnimatedTitle";
 import { HomeCards } from "@/components/HomeCards";
 
 export default async function Home() {
   const user = await currentUser();
+  if (!user) redirect("/login");
   const firstName = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split("@")[0];
 
   return (

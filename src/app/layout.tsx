@@ -11,10 +11,18 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Sunakshini Mini Apps",
-  description: "Personal mini apps hub",
+  description: "Personal mini apps hub — nutrition, fitness, grocery, and more.",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
+  },
+  openGraph: {
+    title: "Sunakshini Mini Apps",
+    description: "Personal mini apps hub — nutrition, fitness, grocery, and more.",
+    url: "https://sunakshini.vercel.app",
+    siteName: "Sunakshini Mini Apps",
+    images: [{ url: "/logo.png", width: 512, height: 512 }],
+    type: "website",
   },
   appleWebApp: {
     capable: true,
